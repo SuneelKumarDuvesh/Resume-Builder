@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>Resume Studio</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Lora:wght@400;600;700&family=Source+Sans+3:wght@400;600;700&family=Space+Grotesk:wght@400;600;700&display=swap">
+<style id="appcss">
+:root{--bg:#f3f1ec;--panel:#fff;--ink:#1d1d1f;--mute:#6b6b70;--line:#dcd8cf;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#17181a;--panel:#232427;--ink:#eee;--mute:#9a9aa0;--line:#3a3b40}}
+:root[data-theme="dark"]{--bg:#17181a;--panel:#232427;--ink:#eee;--mute:#9a9aa0;--line:#3a3b40}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.4 Inter,system-ui,sans-serif}
+.app{display:grid;grid-template-columns:290px 1fr;gap:20px;padding:20px;max-width:1240px;margin:0 auto}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px;align-self:start;position:sticky;top:20px}
+.panel h2{font-size:18px;margin:0 0 4px}.panel p{margin:0 0 14px;color:var(--mute);font-size:13px}
+.panel h3{font-size:13px;margin:16px 0 6px;font-weight:600}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.opts button,.act button{font:inherit;padding:8px;border:1px solid var(--line);background:transparent;color:var(--ink);border-radius:8px;cursor:pointer}
+.opts button[aria-pressed=true]{border-color:var(--ink);background:var(--ink);color:var(--panel)}
+.sw{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.sw button{width:28px;height:28px;border-radius:50%;border:2px solid var(--panel);box-shadow:0 0 0 1px var(--line);cursor:pointer;padding:0}
+.sw button[aria-pressed=true]{box-shadow:0 0 0 2px var(--ink)}
+.sw input{width:34px;height:30px;border:0;padding:0;background:none}
+select,input[type=range]{width:100%;font:inherit}select{padding:7px;border-radius:8px;border:1px solid var(--line);background:var(--panel);color:var(--ink)}
+.act{display:grid;gap:6px;margin-top:16px}.act .primary{background:var(--ink);color:var(--panel);border-color:var(--ink);font-weight:600}
+button:focus-visible,select:focus-visible{outline:2px solid #2a6df4;outline-offset:2px}
+.stage{overflow-x:auto;padding-bottom:20px}
+#resume{width:794px;min-height:1000px;margin:0 auto;background:#fff;color:#222;box-shadow:0 2px 18px rgba(0,0,0,.18)}
+@media (max-width:900px){.app{grid-template-columns:1fr}.panel{position:static}}
+@media print{body{background:#fff}.app{display:block;padding:0}.panel{display:none}.stage{overflow:visible}#resume{box-shadow:none;margin:0}@page{margin:0}}
+</style>
+<style id="rcss">
+#resume{--accent:#1f4e79;--font:Inter,system-ui,sans-serif;--fs:14px;font:var(--fs)/1.5 var(--font);display:grid;box-sizing:border-box;padding:44px;gap:0 32px}
+#resume [contenteditable]{outline:none;border-radius:3px}
+#resume [contenteditable]:hover{background:rgba(120,120,120,.1)}#resume [contenteditable]:focus{background:rgba(42,109,244,.1)}
+#resume h1{font-size:2.4em;line-height:1.1;margin:0;color:var(--htxt,var(--accent))}
+#resume .role{font-size:1.15em;margin:4px 0 2px;color:var(--htxt,inherit)}#resume .contact{margin:0;color:var(--htxt,#555);font-size:.9em}
+#resume h2{font-size:.95em;letter-spacing:.06em;text-transform:uppercase;color:var(--accent);margin:22px 0 8px;border-bottom:1.5px solid var(--accent);padding-bottom:3px}
+#resume p{margin:0 0 6px}#resume .item{margin-bottom:12px;position:relative}
+#resume .row{display:flex;justify-content:space-between;gap:12px;font-weight:600}#resume .row span:last-child{font-weight:400;color:#555;white-space:nowrap}
+#resume .sub{color:var(--accent);margin:0 0 3px}
+#resume .ui{font:12px Inter,sans-serif}
+#resume .x{position:absolute;right:-26px;top:0;border:0;background:#e5484d;color:#fff;border-radius:50%;width:18px;height:18px;line-height:16px;padding:0;cursor:pointer;opacity:0}
+#resume .item:hover .x{opacity:1}
+#resume .add{border:1px dashed #aaa;background:none;border-radius:6px;padding:4px 10px;cursor:pointer;color:#555}
+@media print{#resume .ui{display:none}}
+#resume{grid-template-areas:"head" "main" "side";grid-template-columns:1fr}
+#resume header{grid-area:head;background:var(--hbg,transparent);padding:16px 20px;overflow:hidden}
+#resume .photo{float:right;width:96px;height:96px;border-radius:50%;object-fit:cover;margin-left:16px}
+#resume section{position:relative}#resume .rs{position:absolute;right:0;top:18px;border:0;background:#e5484d;color:#fff;border-radius:4px;padding:2px 6px;cursor:pointer;opacity:0}#resume section:hover>.rs{opacity:1}#resume main{grid-area:main}#resume aside{grid-area:side}
+/* classic */
+#resume.t-classic header{text-align:center;border-bottom:3px double var(--accent);padding-bottom:12px}
+#resume.t-classic h2{border:0;text-align:center}
+/* sidebar */
+#resume.t-sidebar{grid-template-areas:"head head" "side main";grid-template-columns:230px 1fr;padding:0}
+#resume.t-sidebar header{background:var(--hbg,var(--accent));padding:36px 44px}
+#resume.t-sidebar h1,#resume.t-sidebar .contact,#resume.t-sidebar .role{color:var(--htxt,#fff)}#resume.t-sidebar [contenteditable]:hover{background:rgba(255,255,255,.15)}
+#resume.t-sidebar aside{background:#f2f2f2;padding:8px 24px 30px 44px}#resume.t-sidebar main{padding:8px 44px 30px 0}
+/* bold */
+#resume.t-bold{padding-top:0}
+#resume.t-bold header{margin:0 -44px;padding:40px 44px 24px;border-bottom:10px solid var(--accent);background:var(--hbg,#f7f7f7)}
+#resume.t-bold h2{border:0;background:var(--accent);color:#fff;padding:3px 8px;display:inline-block}
+/* minimal */
+#resume.t-minimal{grid-template-areas:"head head" "main side";grid-template-columns:1fr 210px}
+#resume.t-minimal h1{color:#111;font-weight:400;letter-spacing:-.02em;font-size:2.8em}
+#resume.t-minimal h2{border:0;color:#111;font-weight:700;text-transform:none;letter-spacing:0;font-size:1.05em}
+#resume.t-minimal .role{color:var(--accent)}
+</style></head>
+<body>
+<div class="app">
+<section class="panel" aria-label="Design controls">
+<h2>Resume Studio</h2><p>Click any text on the resume to edit it, including section titles.</p>
+<h3>Template</h3>
+<div class="opts" id="tpl"><button data-v="t-classic">Classic</button><button data-v="t-sidebar">Sidebar</button><button data-v="t-bold">Bold</button><button data-v="t-minimal">Minimal</button></div>
+<h3>Color theme</h3>
+<div class="sw" id="sw"></div>
+<h3>Font</h3>
+<select id="font"><option value="Inter,system-ui,sans-serif">Inter (clean sans)</option><option value="Lora,Georgia,serif">Lora (serif)</option><option value="'Source Sans 3',Arial,sans-serif">Source Sans</option><option value="'Space Grotesk',Arial,sans-serif">Space Grotesk</option></select>
+<h3>Text size</h3>
+<input type="range" id="fs" min="12" max="16" step="0.5" value="14" aria-label="Text size">
+<h3>Profile photo</h3>
+<div class="opts"><button onclick="document.getElementById('pf').click()">Upload photo</button><button id="pfx">Remove</button></div>
+<input type="file" id="pf" accept="image/*" hidden>
+<h3>Header colors</h3>
+<div class="sw"><label>Background <input type="color" id="hbg" value="#1f4e79"></label><label>Text <input type="color" id="htx" value="#ffffff"></label><button id="hrs" style="width:auto;height:auto;border-radius:8px;padding:5px 9px;background:none;color:var(--ink)">Reset</button></div>
+<h3>Add a section</h3>
+<div class="opts"><select id="secwhere"><option value="main">Main column</option><option value="side">Side column</option></select><button id="addsec">+ Add section</button></div>
+<p style="margin-top:6px">Inside any section, use its + button to add subsections. Hover a section to remove it.</p>
+<div class="act">
+<button class="primary" id="dl">Download resume (HTML)</button>
+<button id="pr">Print / Save as PDF</button>
+<span id="msg" style="font-size:12px;color:var(--mute)" role="status"></span>
+</div>
+</section>
+<div class="stage"><div id="resume" class="t-classic">
+<header><img class="photo" alt="Profile photo" hidden><h1 contenteditable>Your Name</h1><p class="role" contenteditable>Job Title</p><p class="contact" contenteditable>you@email.com &nbsp;|&nbsp; +91 00000 00000 &nbsp;|&nbsp; City, Country</p></header>
+<main>
+<section><h2>Summary</h2><p contenteditable>Write two or three sentences about your experience, strengths and what you want to do next.</p></section>
+<section><h2>Experience</h2><div id="exp">
+<div class="item"><div class="row"><span contenteditable>Job Title</span><span contenteditable>2022 – Present</span></div><p class="sub" contenteditable>Company Name</p><p contenteditable>Describe what you did and the result. Use numbers where you can.</p><button class="x ui" title="Remove">×</button></div>
+<div class="item"><div class="row"><span contenteditable>Previous Job Title</span><span contenteditable>2019 – 2022</span></div><p class="sub" contenteditable>Previous Company</p><p contenteditable>Describe a key achievement in this role.</p><button class="x ui" title="Remove">×</button></div>
+</div><button class="add ui" data-t="exp">+ Add job</button></section>
+</main>
+<aside>
+<section><h2>Education</h2><div id="edu"><div class="item"><div class="row"><span contenteditable>Degree</span></div><p class="sub" contenteditable>University</p><p contenteditable>2015 – 2019</p><button class="x ui" title="Remove">×</button></div></div><button class="add ui" data-t="edu">+ Add education</button></section>
+<section><h2>Skills</h2><div id="sk"><p contenteditable>Skill one</p><p contenteditable>Skill two</p><p contenteditable>Skill three</p></div><button class="add ui" data-t="sk">+ Add skill</button></section>
+</aside>
+</div></div></div>
+<script>
+const R=document.getElementById('resume'),$=s=>document.querySelector(s);
+const colors=['#1f4e79','#0f766e','#7c3aed','#b91c1c','#c2410c','#111111'];
+let tpl='t-classic',accent=colors[0];
+function apply(){R.className=tpl;R.style.setProperty('--accent',accent);R.style.setProperty('--font',$('#font').value);R.style.setProperty('--fs',$('#fs').value+'px');
+document.querySelectorAll('#tpl button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.v===tpl));
+document.querySelectorAll('#sw button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.c===accent))}
+const sw=$('#sw');colors.forEach(c=>{const b=document.createElement('button');b.style.background=c;b.dataset.c=c;b.title=c;b.setAttribute('aria-label','Color '+c);b.onclick=()=>{accent=c;apply()};sw.appendChild(b)});
+const ci=document.createElement('input');ci.type='color';ci.title='Custom color';ci.oninput=()=>{accent=ci.value;apply()};sw.appendChild(ci);
+document.querySelectorAll('#tpl button').forEach(b=>b.onclick=()=>{tpl=b.dataset.v;apply()});
+$('#font').onchange=apply;$('#fs').oninput=apply;
+const ITEM='<div class="item"><div class="row"><span contenteditable>Subsection title</span><span contenteditable>Date</span></div><p class="sub" contenteditable>Subtitle</p><p contenteditable>Details go here.</p><button class="x ui" title="Remove">×</button></div>';
+function prep(s){s.querySelector('h2').contentEditable=true;if(!s.querySelector('.rs')){const b=document.createElement('button');b.className='rs ui';b.textContent='Remove section';s.appendChild(b)}}
+R.querySelectorAll('section').forEach(prep);
+$('#addsec').onclick=()=>{const s=document.createElement('section');s.innerHTML='<h2>New section</h2><div class="list">'+ITEM+'</div><button class="add ui">+ Add subsection</button>';prep(s);R.querySelector($('#secwhere').value==='side'?'aside':'main').appendChild(s)};
+$('#pf').onchange=e=>{const f=e.target.files[0];if(!f)return;const img=new Image();img.onload=()=>{const n=300,c=document.createElement('canvas');c.width=c.height=n;const m=Math.min(img.width,img.height);c.getContext('2d').drawImage(img,(img.width-m)/2,(img.height-m)/2,m,m,0,0,n,n);const p=R.querySelector('.photo');p.src=c.toDataURL('image/jpeg',.85);p.hidden=false};img.src=URL.createObjectURL(f)};
+$('#pfx').onclick=()=>{const p=R.querySelector('.photo');p.hidden=true;p.removeAttribute('src');$('#pf').value=''};
+$('#hbg').oninput=e=>R.style.setProperty('--hbg',e.target.value);
+$('#htx').oninput=e=>R.style.setProperty('--htxt',e.target.value);
+$('#hrs').onclick=()=>{R.style.removeProperty('--hbg');R.style.removeProperty('--htxt')};
+document.addEventListener('click',e=>{
+const rs=e.target.closest('.rs');if(rs){rs.parentElement.remove();return}
+const x=e.target.closest('.x');if(x){x.parentElement.remove();return}
+const a=e.target.closest('.add');if(!a)return;const box=a.dataset.t?document.getElementById(a.dataset.t):a.previousElementSibling;
+if(!a.dataset.t){box.insertAdjacentHTML('beforeend',ITEM);return}
+if(box.id==='sk'){box.insertAdjacentHTML('beforeend','<p contenteditable>New skill</p>');return}
+const last=box.lastElementChild;if(last){const c=last.cloneNode(true);box.appendChild(c)}});
+$('#pr').onclick=()=>window.print();
+async function dl(){
+const c=R.cloneNode(true);c.querySelectorAll('.ui').forEach(n=>n.remove());c.querySelectorAll('[contenteditable]').forEach(n=>n.removeAttribute('contenteditable'));
+const html='<!doctype html><html><head><meta charset="utf-8"><title>Resume</title><link rel="stylesheet" href="'+document.querySelector('link[rel=stylesheet]').href+'"><style>'+$('#rcss').textContent+'body{margin:0;background:#eee}#resume{margin:0 auto}@media print{body{background:#fff}@page{margin:0}}</style></head><body>'+c.outerHTML+'</body></html>';
+const m=$('#msg');
+try{const d=window.claude&&await claude.use('downloads');
+if(d){await d.save({filename:'resume.html',data:html});m.textContent='Saved. Open it in a browser to print or save as PDF.'}
+else{const u=URL.createObjectURL(new Blob([html],{type:'text/html'})),l=document.createElement('a');l.href=u;l.download='resume.html';document.body.appendChild(l);l.click();l.remove();setTimeout(()=>URL.revokeObjectURL(u),1000);m.textContent='Downloaded. Open it in a browser to print or save as PDF.'}}
+catch(e){m.textContent='Download was cancelled or failed. Use Print / Save as PDF instead.'}}
+$('#dl').onclick=dl;apply();
+</script>
+</body></html>
