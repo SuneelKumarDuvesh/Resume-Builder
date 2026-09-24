@@ -1,7 +1,9 @@
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8"><title>Resume Studio</title>
+<html lang="en"><head><meta charset="utf-8"><title>Tool Studio</title>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Lora:wght@400;600;700&family=Source+Sans+3:wght@400;600;700&family=Space+Grotesk:wght@400;600;700&display=swap">
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
 <style id="appcss">
 :root{--bg:#f3f1ec;--panel:#fff;--ink:#1d1d1f;--mute:#6b6b70;--line:#dcd8cf;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#17181a;--panel:#232427;--ink:#eee;--mute:#9a9aa0;--line:#3a3b40}}
@@ -26,7 +28,22 @@ button:focus-visible,select:focus-visible{outline:2px solid #2a6df4;outline-offs
 .stage{overflow-x:auto;padding-bottom:20px}
 #resume{width:794px;min-height:1000px;margin:0 auto;background:#fff;color:#222;box-shadow:0 2px 18px rgba(0,0,0,.18)}
 @media (max-width:900px){.app{grid-template-columns:1fr}.panel{position:static;max-height:none}}
-@media print{body{background:#fff}.app{display:block;padding:0}.panel{display:none}.stage{overflow:visible}#resume{box-shadow:none;margin:0}@page{margin:0}}
+.app[hidden]{display:none}
+.tabs{display:flex;gap:6px;max-width:1240px;margin:0 auto;padding:16px 20px 0}
+.tabs button{font:inherit;padding:8px 14px;border:1px solid var(--line);background:transparent;color:var(--ink);border-radius:8px;cursor:pointer}
+.tabs button[aria-pressed=true]{background:var(--ink);color:var(--panel);border-color:var(--ink)}
+.pg{position:relative;margin:0 auto 16px;box-shadow:0 2px 12px rgba(0,0,0,.25);background:#fff}.pg canvas{display:block;width:100%}
+.tx{position:absolute;white-space:pre;line-height:1;color:transparent;background:transparent;outline:none;cursor:text;font-family:Helvetica,Arial,sans-serif}
+.tx:hover{outline:1px dashed #2a6df4}.tx.on{color:var(--tc,#000);background:var(--cc,#fff)}
+.act button[aria-pressed=true]{background:#2a6df4;color:#fff;border-color:#2a6df4}
+#pages.draw .pg{cursor:crosshair}#pages.draw .tx{pointer-events:none}
+.pv{position:absolute;border:1.5px dashed #2a6df4;background:rgba(42,109,244,.12)}
+.nb{position:absolute;z-index:4}.nbx{box-sizing:border-box;padding:2px;line-height:1.2;white-space:pre;overflow:hidden;resize:both;min-width:30px;min-height:16px;background:var(--cc,#fff);color:var(--tc,#000);outline:none;font-family:Helvetica,Arial,sans-serif}
+.nb:hover .nbx,.nb:focus-within .nbx{outline:1px dashed #2a6df4}
+.nbt{position:absolute;top:-26px;left:0;display:none;gap:3px}.nb:hover .nbt,.nb:focus-within .nbt{display:flex}
+.nbt button{font:12px Inter,sans-serif;border:0;background:#333;color:#fff;border-radius:4px;padding:3px 7px;cursor:pointer}
+.act button:disabled{opacity:.5;cursor:not-allowed}
+@media print{.tabs{display:none}body{background:#fff}.app{display:block;padding:0}.panel{display:none}.stage{overflow:visible}#resume{box-shadow:none;margin:0}@page{margin:0}}
 </style>
 <style id="rcss">
 #resume{--accent:#1f4e79;--font:Inter,system-ui,sans-serif;--fs:14px;font:var(--fs)/1.5 var(--font);display:grid;box-sizing:border-box;padding:var(--pp,44px);gap:0 32px;position:relative}
@@ -68,9 +85,10 @@ button:focus-visible,select:focus-visible{outline:2px solid #2a6df4;outline-offs
 #resume.t-minimal .role{color:var(--accent)}
 </style></head>
 <body>
-<div class="app">
+<nav class="tabs"><button data-tab="rs" aria-pressed="true">Resume builder</button><button data-tab="pdf" aria-pressed="false">PDF editor</button></nav>
+<div class="app" id="rsapp">
 <section class="panel" aria-label="Design controls">
-<h2>Resume Studio</h2><p>Click any text on the resume to edit it, including section titles.</p>
+<h2>Tool Studio</h2><p>Click any text on the resume to edit it, including section titles.</p>
 <h3>Template</h3>
 <div class="opts" id="tpl"><button data-v="t-classic">Classic</button><button data-v="t-sidebar">Sidebar</button><button data-v="t-bold">Bold</button><button data-v="t-minimal">Minimal</button></div>
 <h3>Color theme</h3>
@@ -125,6 +143,16 @@ button:focus-visible,select:focus-visible{outline:2px solid #2a6df4;outline-offs
 <section><h2>Skills</h2><div id="sk"><p contenteditable>Skill one</p><p contenteditable>Skill two</p><p contenteditable>Skill three</p></div><button class="add ui" data-t="sk">+ Add skill</button></section>
 </aside>
 </div></div></div>
+<div class="app" id="pdfapp" hidden>
+<section class="panel" aria-label="PDF editor controls"><h2>PDF editor</h2><p>Upload a PDF, click any text and change it. The file stays in your browser.</p>
+<div class="act" style="margin-top:0"><button class="primary" onclick="document.getElementById('pdfin').click()">Upload PDF</button><button id="addbox" aria-pressed="false">Add or replace text (draw a box)</button></div>
+<input type="file" id="pdfin" accept="application/pdf" hidden>
+<h3>Edited text style</h3>
+<div class="sw"><label>Cover color <input type="color" id="pcc" value="#ffffff"></label><label>Text color <input type="color" id="ptc" value="#000000"></label></div>
+<p style="margin-top:6px">Set the cover color to match the page background behind the text you change.</p>
+<div class="act"><button class="primary" id="pdl" disabled>Download edited PDF</button><span id="pmsg" style="font-size:12px;color:var(--mute)" role="status"></span></div>
+<h3>Good to know</h3><p>Edited text is redrawn in Helvetica, so its font changes. Only Latin letters are supported. For scanned PDFs or images, use the draw-a-box button: drag over any area, and it is covered and replaced with the text you type. Boxes can be resized and their text size changed.</p></section>
+<div class="stage" id="pstage"><div id="pages"></div></div></div>
 <script>
 const R=document.getElementById('resume'),$=s=>document.querySelector(s);
 const colors=['#1f4e79','#0f766e','#7c3aed','#b91c1c','#c2410c','#111111'];
@@ -179,6 +207,55 @@ try{const d=window.claude&&await claude.use('downloads');
 if(d){await d.save({filename:'resume.html',data:html});m.textContent='Saved. Open it in a browser to print or save as PDF.'}
 else{const u=URL.createObjectURL(new Blob([html],{type:'text/html'})),l=document.createElement('a');l.href=u;l.download='resume.html';document.body.appendChild(l);l.click();l.remove();setTimeout(()=>URL.revokeObjectURL(u),1000);m.textContent='Downloaded. Open it in a browser to print or save as PDF.'}}
 catch(e){m.textContent='Download was cancelled or failed. Use Print / Save as PDF instead.'}}
+document.querySelectorAll('.tabs button').forEach(b=>b.onclick=()=>{$('#rsapp').hidden=b.dataset.tab!=='rs';$('#pdfapp').hidden=b.dataset.tab!=='pdf';document.querySelectorAll('.tabs button').forEach(x=>x.setAttribute('aria-pressed',x===b))});
+let pdfBytes=null,pdfName='',spans=[],boxes=[],draw=false,ds=null;const pmsg=t=>$('#pmsg').textContent=t;
+async function saveFile(name,data,mime){const d=window.claude&&await claude.use('downloads');
+if(d){await d.save({filename:name,data});pmsg('Saved '+name)}
+else{const u=URL.createObjectURL(new Blob([data],{type:mime})),l=document.createElement('a');l.href=u;l.download=name;document.body.appendChild(l);l.click();l.remove();setTimeout(()=>URL.revokeObjectURL(u),1000);pmsg('Downloaded '+name)}}
+function setPc(){const g=$('#pages');g.style.setProperty('--cc',$('#pcc').value);g.style.setProperty('--tc',$('#ptc').value)}
+$('#pcc').oninput=$('#ptc').oninput=setPc;setPc();
+$('#pages').addEventListener('focusin',e=>{if(e.target.classList.contains('tx'))e.target.classList.add('on')});
+$('#pages').addEventListener('focusout',e=>{const el=e.target;if(el.classList&&el.classList.contains('tx')&&el.textContent===spans[+el.dataset.i].orig)el.classList.remove('on')});
+$('#pages').addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.classList.contains('tx'))e.preventDefault()});
+function ce(el){el.contentEditable='plaintext-only';if(el.contentEditable!=='plaintext-only')el.contentEditable='true'}
+function mkBox(pg,l,t,w,h){const fs=Math.max(8,Math.min(40,Math.round(h*.7))),nb=document.createElement('div');nb.className='nb';nb.style.left=l+'px';nb.style.top=t+'px';nb.dataset.fs=fs;
+nb.innerHTML='<div class="nbt" contenteditable="false"><button data-a="-">A-</button><button data-a="+">A+</button><button data-a="x">Delete</button></div><div class="nbx" spellcheck="false"></div>';
+const x=nb.querySelector('.nbx');ce(x);x.style.width=w+'px';x.style.height=h+'px';x.style.fontSize=fs+'px';pg.appendChild(nb);boxes.push(nb);x.focus()}
+$('#addbox').onclick=()=>{draw=!draw;$('#pages').classList.toggle('draw',draw);$('#addbox').setAttribute('aria-pressed',draw);pmsg(draw?'Drag over the area you want to cover and replace.':'')};
+$('#pages').addEventListener('pointerdown',e=>{if(!draw)return;const pg=e.target.closest('.pg');if(!pg)return;e.preventDefault();const r=pg.getBoundingClientRect(),pv=document.createElement('div');pv.className='pv';pg.appendChild(pv);pg.setPointerCapture(e.pointerId);ds={pg,pv,r,x:e.clientX-r.left,y:e.clientY-r.top,l:0,t:0,w:0,h:0}});
+$('#pages').addEventListener('pointermove',e=>{if(!ds)return;const x=e.clientX-ds.r.left,y=e.clientY-ds.r.top;ds.l=Math.min(ds.x,x);ds.t=Math.min(ds.y,y);ds.w=Math.abs(x-ds.x);ds.h=Math.abs(y-ds.y);Object.assign(ds.pv.style,{left:ds.l+'px',top:ds.t+'px',width:ds.w+'px',height:ds.h+'px'})});
+$('#pages').addEventListener('pointerup',()=>{if(!ds)return;const d=ds;ds=null;d.pv.remove();if(d.w>10&&d.h>8)mkBox(d.pg,d.l,d.t,d.w,d.h);draw=false;$('#pages').classList.remove('draw');$('#addbox').setAttribute('aria-pressed','false');pmsg('')});
+$('#pages').addEventListener('click',e=>{const b=e.target.closest('.nbt button');if(!b)return;const nb=b.closest('.nb'),a=b.dataset.a;if(a==='x'){boxes=boxes.filter(y=>y!==nb);nb.remove();return}const f=Math.max(6,Math.min(72,+nb.dataset.fs+(a==='+'?1:-1)));nb.dataset.fs=f;nb.querySelector('.nbx').style.fontSize=f+'px'});
+$('#pdfin').onchange=async e=>{const f=e.target.files[0];if(!f)return;
+if(!window.pdfjsLib||!window.PDFLib){pmsg('PDF libraries did not load. Check your connection and reload.');return}
+pmsg('Loading...');$('#pdl').disabled=true;
+try{pdfBytes=new Uint8Array(await f.arrayBuffer());pdfName=f.name;
+pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+const doc=await pdfjsLib.getDocument({data:pdfBytes.slice()}).promise,box=$('#pages');box.innerHTML='';spans=[];boxes=[];
+const W=Math.min(900,$('#pstage').clientWidth-20);let found=0;
+for(let n=1;n<=doc.numPages;n++){pmsg('Rendering page '+n+' of '+doc.numPages+'...');
+const page=await doc.getPage(n),b=page.getViewport({scale:1}),sc=W/b.width,vp=page.getViewport({scale:sc});
+const pg=document.createElement('div');pg.className='pg';pg.dataset.sc=sc;pg.dataset.ph=b.height;pg.style.width=vp.width+'px';pg.style.height=vp.height+'px';
+const cv=document.createElement('canvas'),hv=page.getViewport({scale:sc*2});cv.width=hv.width;cv.height=hv.height;pg.appendChild(cv);box.appendChild(pg);
+await page.render({canvasContext:cv.getContext('2d'),viewport:hv}).promise;
+const tc=await page.getTextContent();
+tc.items.forEach(it=>{if(!it.str||!it.str.trim())return;found++;
+const t=pdfjsLib.Util.transform(vp.transform,it.transform),fs=Math.hypot(t[0],t[1]),sp=document.createElement('span');
+sp.className='tx';sp.contentEditable='plaintext-only';if(sp.contentEditable!=='plaintext-only')sp.contentEditable='true';sp.spellcheck=false;sp.textContent=it.str;
+sp.style.cssText='left:'+t[4]+'px;top:'+(t[5]-fs*.82)+'px;font-size:'+fs+'px;min-width:'+(it.width*sc)+'px';sp.dataset.i=spans.length;
+spans.push({el:sp,orig:it.str,page:n-1,x:it.transform[4],y:it.transform[5],fs:Math.hypot(it.transform[0],it.transform[1]),w:it.width});pg.appendChild(sp)})}
+pmsg(found?'Loaded '+doc.numPages+' page(s). Click any text to edit it, or draw a box to add text.':'No editable text found (probably a scanned image). Use the draw-a-box button to cover an area and type new text.');$('#pdl').disabled=false;
+}catch(err){pmsg('Could not open this PDF: '+(err.message||err))}};
+$('#pdl').onclick=async()=>{const{PDFDocument,StandardFonts,rgb}=PDFLib,hx=h=>[1,3,5].map(i=>parseInt(h.substr(i,2),16)/255);
+const ed=spans.filter(x=>x.el.textContent!==x.orig);if(!ed.length&&!boxes.length){pmsg('No edits yet. Change some text or draw a box first.');return}
+try{pmsg('Building PDF...');const doc=await PDFDocument.load(pdfBytes,{ignoreEncryption:true}),font=await doc.embedFont(StandardFonts.Helvetica),cc=rgb(...hx($('#pcc').value)),tc=rgb(...hx($('#ptc').value)),pgs=doc.getPages();
+ed.forEach(x=>{const pg=pgs[x.page],txt=x.el.textContent.replace(/\s+/g,' ').replace(/[^\x20-\x7E\xA0-\xFF]/g,'?'),w=Math.max(x.w,font.widthOfTextAtSize(txt,x.fs));
+pg.drawRectangle({x:x.x-1,y:x.y-x.fs*.25,width:w+2,height:x.fs*1.2,color:cc});if(txt.trim())pg.drawText(txt,{x:x.x,y:x.y,size:x.fs,font,color:tc})});
+boxes.forEach(nb=>{const pe=nb.parentElement,pg=pgs[[...$('#pages').children].indexOf(pe)],sc=+pe.dataset.sc,ph=+pe.dataset.ph,bx=nb.querySelector('.nbx'),fs=+nb.dataset.fs,l=nb.offsetLeft,t=nb.offsetTop,w=bx.offsetWidth,h=bx.offsetHeight;
+pg.drawRectangle({x:l/sc,y:ph-(t+h)/sc,width:w/sc,height:h/sc,color:cc});
+bx.innerText.split('\n').forEach((ln,i)=>{const tx=ln.replace(/[^ -~\u00a0-\u00ff]/g,'?');if(tx.trim())pg.drawText(tx,{x:(l+2)/sc,y:ph-(t+2+fs*.9+i*fs*1.2)/sc,size:fs/sc,font,color:tc})})});
+await saveFile(pdfName.replace(/\.pdf$/i,'')+'-edited.pdf',await doc.save(),'application/pdf');
+}catch(err){pmsg(err&&err.code==='declined'?'Save cancelled.':'Could not build the PDF: '+(err.message||err))}};
 $('#dl').onclick=dl;apply();spDefaults();pApply();
 </script>
 </body></html>
