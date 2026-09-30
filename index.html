@@ -1,37 +1,76 @@
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8"><title>Tool Studio</title>
+<html lang="en"><head><meta charset="utf-8"><title>ResumeForge</title>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Lora:wght@400;600;700&family=Source+Sans+3:wght@400;600;700&family=Space+Grotesk:wght@400;600;700&display=swap">
 <script defer src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 <script defer src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
 <style id="appcss">
-:root{--bg:#f3f1ec;--panel:#fff;--ink:#1d1d1f;--mute:#6b6b70;--line:#dcd8cf;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#17181a;--panel:#232427;--ink:#eee;--mute:#9a9aa0;--line:#3a3b40}}
-:root[data-theme="dark"]{--bg:#17181a;--panel:#232427;--ink:#eee;--mute:#9a9aa0;--line:#3a3b40}
+:root{--bg:#0a0e1a;--panel:#111527;--ink:#e8ecff;--mute:#8891b8;--line:#2a3155;--glow:#7c6cf6;--glow2:#3ec9ff;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
 html{scroll-padding-top:env(safe-area-inset-top,0px)}
-body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.4 Inter,system-ui,sans-serif}
+body{margin:0;min-height:100vh;background:radial-gradient(circle at 15% 0%,#1a1f3d 0%,var(--bg) 45%),radial-gradient(circle at 100% 30%,#1a2340 0%,transparent 40%),var(--bg);color:var(--ink);font:15px/1.4 'Space Grotesk',Inter,system-ui,sans-serif}
 .app{display:grid;grid-template-columns:290px 1fr;gap:20px;padding:20px;max-width:1240px;margin:0 auto}
-.panel{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px;align-self:start;position:sticky;top:20px;max-height:calc(100vh - 40px);overflow:auto}
+.topbar{position:sticky;top:0;z-index:40;background:rgba(10,14,26,.9);backdrop-filter:blur(10px);border-bottom:1px solid var(--line);display:flex;flex-wrap:wrap;align-items:center;gap:14px;padding:10px 18px;padding-top:calc(10px + env(safe-area-inset-top,0px))}
+.brandwrap{display:flex;align-items:center;gap:9px;margin-right:6px}
+.logo{width:28px;height:28px;flex:none}
+.mspacer{flex:1 1 auto;min-width:6px}
+.menu{display:flex;gap:6px}
+.filegrp{padding-left:14px;border-left:1px solid var(--line)}
+@media (max-width:640px){.filegrp{border-left:0;padding-left:0}}
+.topbar .brand{font-weight:800;margin-right:auto;letter-spacing:.03em;background:linear-gradient(90deg,var(--glow2),var(--glow));-webkit-background-clip:text;background-clip:text;color:transparent;text-shadow:0 0 18px rgba(62,201,255,.35)}
+.topbar button{font:inherit;padding:8px 14px;border:1px solid var(--line);background:rgba(255,255,255,.03);color:var(--ink);border-radius:9px;cursor:pointer;white-space:nowrap}
+.topbar button:hover{border-color:var(--glow2)}
+.topbar .primary{background:linear-gradient(90deg,var(--glow),var(--glow2));color:#0a0e1a;border-color:transparent;font-weight:700;box-shadow:0 0 16px -3px var(--glow2)}
+.tabs{display:flex;gap:6px;max-width:1240px;margin:0 auto;padding:16px 20px 0}
+.tabs button{font:inherit;padding:9px 16px;border:1px solid var(--line);background:rgba(255,255,255,.02);color:var(--mute);border-radius:9px;cursor:pointer}
+.tabs button[aria-pressed=true]{background:linear-gradient(90deg,var(--glow),var(--glow2));color:#0a0e1a;border-color:transparent;font-weight:700;box-shadow:0 0 14px -3px var(--glow2)}
+#dopen{display:none}
+#startScreen{position:fixed;inset:0;z-index:80;background:radial-gradient(circle at 20% 10%,#1a1f3d 0%,var(--bg) 55%),var(--bg);display:flex;align-items:center;justify-content:center;padding:20px}
+#startScreen[hidden]{display:none}
+.ssbox{max-width:560px;text-align:center}
+.sslogo{width:52px;height:52px;margin-bottom:10px}
+.ssbrand{margin:0 0 14px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;font-size:12px;color:var(--glow2)}
+.ssbox h1{font-size:clamp(26px,4.5vw,38px);line-height:1.15;margin:0 0 12px;background:linear-gradient(90deg,var(--glow2),var(--glow));-webkit-background-clip:text;background-clip:text;color:transparent}
+.sslead{color:var(--mute);font-size:15px;line-height:1.5;margin:0 0 26px}
+.ssfeat{display:grid;grid-template-columns:1fr 1fr;gap:10px;text-align:left;margin-bottom:28px}
+@media (max-width:520px){.ssfeat{grid-template-columns:1fr}}
+.ssf{display:flex;align-items:center;gap:9px;padding:11px 12px;border:1px solid var(--line);border-radius:10px;background:rgba(255,255,255,.02);font-size:13px;color:var(--ink)}
+.ssf span{font-size:17px}
+.sscta{padding:13px 30px;font-size:15px;border-radius:12px}
+.panel{background:linear-gradient(180deg,rgba(124,108,246,.08),rgba(17,21,39,.9)),var(--panel);border:1px solid var(--line);border-radius:16px;padding:16px;align-self:start;position:sticky;top:20px;max-height:calc(100vh - 40px);overflow:auto;box-shadow:0 0 0 1px rgba(124,108,246,.08),0 12px 40px rgba(0,0,0,.5)}
 .sl{display:block;font-size:12px;color:var(--mute);margin:6px 0 2px}.panel label{font-size:13px}
-.panel h2{font-size:18px;margin:0 0 4px}.panel p{margin:0 0 14px;color:var(--mute);font-size:13px}
-.panel h3{font-size:13px;margin:16px 0 6px;font-weight:600}
+.panel h2{font-size:19px;margin:0 0 4px;font-weight:700;letter-spacing:.02em;background:linear-gradient(90deg,var(--glow2),var(--glow));-webkit-background-clip:text;background-clip:text;color:transparent}
+.ptabs{display:flex;gap:4px;margin:12px 0 4px;background:rgba(255,255,255,.03);border:1px solid var(--line);border-radius:10px;padding:3px}
+.ptb{flex:1;font:12px Inter,sans-serif;font-weight:600;padding:7px 4px;border:0;background:none;color:var(--mute);border-radius:8px;cursor:pointer}
+.ptb[aria-pressed=true]{background:linear-gradient(90deg,var(--glow),var(--glow2));color:#0a0e1a}.panel p{margin:0 0 14px;color:var(--mute);font-size:13px}
+.panel h3{font-size:11px;margin:18px 0 7px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--glow2)}
 .opts{display:grid;grid-template-columns:1fr 1fr;gap:6px}
-.opts button,.act button{font:inherit;padding:8px;border:1px solid var(--line);background:transparent;color:var(--ink);border-radius:8px;cursor:pointer}
-.opts button[aria-pressed=true]{border-color:var(--ink);background:var(--ink);color:var(--panel)}
+.opts button,.act button{font:inherit;padding:9px;border:1px solid var(--line);background:rgba(255,255,255,.02);color:var(--ink);border-radius:10px;cursor:pointer;transition:border-color .15s,box-shadow .15s}
+.opts button:hover,.act button:hover{border-color:var(--glow2);box-shadow:0 0 12px -2px var(--glow2)}
+.opts button[aria-pressed=true]{border-color:var(--glow2);background:linear-gradient(90deg,var(--glow),var(--glow2));color:#0a0e1a;font-weight:700;box-shadow:0 0 16px -2px var(--glow2)}
 .sw{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
 .sw button{width:28px;height:28px;border-radius:50%;border:2px solid var(--panel);box-shadow:0 0 0 1px var(--line);cursor:pointer;padding:0}
-.sw button[aria-pressed=true]{box-shadow:0 0 0 2px var(--ink)}
-.sw input{width:34px;height:30px;border:0;padding:0;background:none}
-select,input[type=range]{width:100%;font:inherit}select{padding:7px;border-radius:8px;border:1px solid var(--line);background:var(--panel);color:var(--ink)}
-.act{display:grid;gap:6px;margin-top:16px}.act .primary{background:var(--ink);color:var(--panel);border-color:var(--ink);font-weight:600}
-button:focus-visible,select:focus-visible{outline:2px solid #2a6df4;outline-offset:2px}
+.sw button[aria-pressed=true]{box-shadow:0 0 0 2px var(--glow2),0 0 10px -1px var(--glow2)}
+.sw input{width:34px;height:30px;border:1px solid var(--line);border-radius:6px;padding:0;background:none}
+select,input[type=range]{width:100%;font:inherit;accent-color:var(--glow2)}select{padding:8px;border-radius:9px;border:1px solid var(--line);background:#0d1226;color:var(--ink)}
+.act{display:grid;gap:6px;margin-top:16px}.act .primary{background:linear-gradient(90deg,var(--glow),var(--glow2));color:#0a0e1a;border-color:transparent;font-weight:700;box-shadow:0 0 18px -4px var(--glow2)}
+button:focus-visible,select:focus-visible{outline:2px solid var(--glow2);outline-offset:2px}
 .stage{overflow-x:auto;padding-bottom:20px}
-#resume{width:794px;min-height:1000px;margin:0 auto;background:#fff;color:#222;box-shadow:0 2px 18px rgba(0,0,0,.18)}
-@media (max-width:900px){.app{grid-template-columns:1fr}.panel{position:static;max-height:none}}
+#resume{width:794px;min-height:1000px;margin:0 auto;background:#fff;color:#222;box-shadow:0 0 0 1px rgba(124,108,246,.25),0 0 50px -10px rgba(124,108,246,.35),0 20px 60px rgba(0,0,0,.55)}
+@media (max-width:900px){
+.tabs{padding:10px 12px 0;overflow-x:auto}
+.app{grid-template-columns:1fr;padding:12px;gap:12px}
+#dopen{display:inline-flex}
+.panel{position:fixed;inset:0 0 0 auto;width:min(340px,88vw);height:100%;height:100dvh;z-index:60;border-radius:0;transform:translateX(105%);transition:transform .25s ease;box-shadow:-6px 0 24px rgba(0,0,0,.25);padding-top:calc(16px + env(safe-area-inset-top,0px));padding-bottom:calc(16px + env(safe-area-inset-bottom,0px))}
+.panel.open{transform:translateX(0)}
+.pmask{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:55}
+.pmask.open{display:block}
+.pclose{display:block;margin-left:auto;font:20px/1 sans-serif;border:0;background:none;color:var(--ink);cursor:pointer;padding:4px 8px}
+.stage{padding:0 4px;overflow-x:hidden}
+#resume{transform-origin:top left}
+.opts{grid-template-columns:1fr 1fr}
+}
+@media (min-width:901px){.pclose,.pmask,#dopen{display:none}}
 .app[hidden]{display:none}
-.tabs{display:flex;gap:6px;max-width:1240px;margin:0 auto;padding:16px 20px 0}
-.tabs button{font:inherit;padding:8px 14px;border:1px solid var(--line);background:transparent;color:var(--ink);border-radius:8px;cursor:pointer}
-.tabs button[aria-pressed=true]{background:var(--ink);color:var(--panel);border-color:var(--ink)}
 .pg{position:relative;margin:0 auto 16px;box-shadow:0 2px 12px rgba(0,0,0,.25);background:#fff}.pg canvas{display:block;width:100%}
 .tx{position:absolute;white-space:pre;line-height:1;color:transparent;background:transparent;outline:none;cursor:text;font-family:Helvetica,Arial,sans-serif}
 .tx:hover{outline:1px dashed #2a6df4}.tx.on{color:var(--tc,#000);background:var(--cc,#fff)}
@@ -43,16 +82,31 @@ button:focus-visible,select:focus-visible{outline:2px solid #2a6df4;outline-offs
 .nbt{position:absolute;top:-26px;left:0;display:none;gap:3px}.nb:hover .nbt,.nb:focus-within .nbt{display:flex}
 .nbt button{font:12px Inter,sans-serif;border:0;background:#333;color:#fff;border-radius:4px;padding:3px 7px;cursor:pointer}
 .act button:disabled{opacity:.5;cursor:not-allowed}
-@media print{.tabs{display:none}body{background:#fff}.app{display:block;padding:0}.panel{display:none}.stage{overflow:visible}#resume{box-shadow:none;margin:0}@page{margin:0}}
+#fx{position:fixed;z-index:50;width:18px;height:18px;border-radius:50%;border:0;background:#e5484d;color:#fff;font:13px/18px sans-serif;padding:0;cursor:pointer}#fx[hidden]{display:none}
+#resume .lnk{color:var(--accent);text-decoration:underline}
+#resume .af{font:11px Inter,sans-serif;border:1px dashed #aaa;background:#fff;color:#555;border-radius:4px;padding:2px}#resume .tools .af{background:#444;color:#fff;border:0}#resume .tools select option{color:#000;background:#fff}
+
+#emenu{position:fixed;z-index:70;background:#1a1f3d;border:1px solid var(--line);border-radius:10px;padding:6px;display:none;flex-direction:column;gap:2px;box-shadow:0 12px 30px rgba(0,0,0,.5)}
+#emenu button{font:13px Inter,sans-serif;border:0;background:none;color:var(--ink);text-align:left;padding:7px 10px;border-radius:6px;cursor:pointer;white-space:nowrap}
+#emenu button:hover{background:rgba(124,108,246,.25)}
+#cmodal{position:fixed;inset:0;z-index:90;display:flex;align-items:center;justify-content:center;padding:20px}
+#cmodal[hidden]{display:none}
+.cbox{max-width:380px;background:linear-gradient(180deg,rgba(124,108,246,.1),rgba(17,21,39,.96)),var(--panel);border:1px solid var(--line);border-radius:14px;padding:20px;box-shadow:0 20px 60px rgba(0,0,0,.6)}
+.cbox p{margin:0 0 16px;color:var(--ink);font-size:14px;line-height:1.4}
+.cbox .crow{display:flex;gap:8px;justify-content:flex-end}
+.cbox button{font:inherit;padding:8px 14px;border:1px solid var(--line);background:rgba(255,255,255,.03);color:var(--ink);border-radius:8px;cursor:pointer}
+.cbox #cyes{background:linear-gradient(90deg,var(--glow),var(--glow2));color:#0a0e1a;border-color:transparent;font-weight:700}
+@media print{#fx{display:none}#emenu{display:none!important}.tabs{display:none}body{background:#fff}.app{display:block;padding:0}.panel{display:none}.stage{overflow:visible}#resume{box-shadow:none;margin:0}@page{margin:0}}
 </style>
 <style id="rcss">
 #resume{--accent:#1f4e79;--font:Inter,system-ui,sans-serif;--fs:14px;font:var(--fs)/1.5 var(--font);display:grid;box-sizing:border-box;padding:var(--pp,44px);gap:0 32px;position:relative}
 #resume [contenteditable]{outline:none;border-radius:3px}
-#resume [contenteditable]:hover{background:rgba(120,120,120,.1)}#resume [contenteditable]:focus{background:rgba(42,109,244,.1)}
+#resume [contenteditable]{outline:1px dashed rgba(120,120,120,.35)}#resume h1[contenteditable],#resume h2[contenteditable]{outline:1px dashed rgba(120,120,120,.25)}#resume [contenteditable]:hover{background:rgba(120,120,120,.12)}#resume [contenteditable]:focus{background:rgba(42,109,244,.12);outline-color:#2a6df4}
+@media print{#resume [contenteditable]{outline:none!important}}
 #resume h1{font-size:var(--h1s,34px);line-height:1.1;margin:0;color:var(--htxt,var(--accent))}
 #resume .role{font-size:var(--rs,16px);margin:4px 0 2px;color:var(--htxt,inherit)}#resume .contact{margin:0;color:var(--htxt,#555);font-size:.9em}
 #resume h2{font-size:var(--h2s,13px);letter-spacing:.06em;text-transform:uppercase;color:var(--accent);margin:var(--sg,22px) 0 8px;border-bottom:1.5px solid var(--accent);padding-bottom:3px}
-#resume p{margin:0 0 6px}#resume .item{margin-bottom:var(--ig,12px);position:relative}
+#resume p{margin:0 0 var(--pg,6px)}#resume .item{margin-bottom:var(--ig,12px);padding:var(--ip,0px) 0;position:relative}
 #resume .row{display:flex;justify-content:space-between;gap:12px;font-weight:600}#resume .row span:last-child{font-weight:400;color:#555;white-space:nowrap}
 #resume .sub{color:var(--accent);margin:0 0 3px}
 #resume .ui{font:12px Inter,sans-serif}
@@ -63,9 +117,14 @@ button:focus-visible,select:focus-visible{outline:2px solid #2a6df4;outline-offs
 #resume{grid-template-areas:"head" "main" "side";grid-template-columns:1fr;grid-template-rows:auto auto 1fr}
 #resume header{grid-area:head;background:var(--hbg,transparent);padding:var(--hp,16px) 20px;margin-bottom:var(--hg,0px);min-height:var(--hh,0px);box-sizing:border-box;display:flex;flex-direction:column;justify-content:center;overflow:hidden}
 #resume main,#resume aside{min-height:40px}
-#resume .pw{position:absolute;z-index:5;left:640px;top:30px;width:var(--ps,96px);height:calc(var(--ps,96px)*var(--pa,1));cursor:grab;touch-action:none;user-select:none}#resume .pw.drag{outline:2px dashed #2a6df4}#resume .photo{width:100%;height:100%;object-fit:cover;border-radius:var(--pr,50%);border:var(--pb,0px) solid var(--accent);box-sizing:border-box;pointer-events:none;display:block}
-#resume section{position:relative}#resume .tools{position:absolute;right:0;top:0;display:flex;gap:4px;opacity:0;z-index:3}#resume section:hover>.tools{opacity:1}#resume .tools>*{border:0;background:#444;color:#fff;border-radius:4px;padding:2px 7px;cursor:pointer}#resume .tools .rs{background:#e5484d}#resume .tools .dh{cursor:grab}
-@media (hover:none){#resume .tools,#resume .x{opacity:1}}#resume main{grid-area:main}#resume aside{grid-area:side}
+
+#resume section{position:relative}#resume .tools{position:absolute;right:0;top:0;display:flex;flex-wrap:wrap;justify-content:flex-end;max-width:100%;gap:4px;opacity:0;z-index:3}#resume section.hshow>.tools{opacity:1}#resume .tools>*{border:0;background:#444;color:#fff;border-radius:4px;padding:2px 7px;cursor:pointer}#resume .tools .rs{background:#e5484d}#resume .tools .dh{cursor:grab}
+#resume .blk{position:relative}#resume .blk:hover>.x{opacity:1}
+#resume ul.bl{margin:0 0 var(--pg,6px);padding-left:1.3em;list-style-type:var(--ls,disc)}#resume ul.bl li::marker{color:var(--accent)}
+#resume .tb{white-space:pre-wrap;margin:0 0 var(--pg,6px)}
+#resume .itools{display:none;gap:4px;margin-top:2px}#resume .item.hshow>.itools{display:flex}
+#resume .itools button{font:11px Inter,sans-serif;border:1px dashed #aaa;background:none;border-radius:4px;padding:2px 6px;cursor:pointer;color:#555}
+@media (hover:none){#resume .tools,#resume .x,#resume .itools{opacity:1;display:flex}}#resume main{grid-area:main}#resume aside{grid-area:side}
 /* classic */
 #resume.t-classic header{text-align:center;border-bottom:3px double var(--accent);padding-bottom:12px}
 #resume.t-classic h2{border:0;text-align:center}
@@ -85,10 +144,33 @@ button:focus-visible,select:focus-visible{outline:2px solid #2a6df4;outline-offs
 #resume.t-minimal .role{color:var(--accent)}
 </style></head>
 <body>
-<nav class="tabs"><button data-tab="rs" aria-pressed="true">Resume builder</button><button data-tab="pdf" aria-pressed="false">PDF editor</button></nav>
+<div class="topbar">
+<span class="brandwrap"><svg class="logo" viewBox="0 0 32 32" aria-hidden="true"><rect x="2" y="2" width="28" height="28" rx="8" fill="url(#lg)"/><circle cx="16" cy="12" r="2.4" fill="#0a0e1a"/><rect x="11" y="16.4" width="10" height="1.6" rx="0.8" fill="#0a0e1a"/><rect x="11" y="19.4" width="10" height="1.6" rx="0.8" fill="#0a0e1a"/><rect x="11" y="22.4" width="6.5" height="1.6" rx="0.8" fill="#0a0e1a"/><defs><linearGradient id="lg" x1="0" y1="0" x2="32" y2="32"><stop offset="0" stop-color="#3ec9ff"/><stop offset="1" stop-color="#7c6cf6"/></linearGradient></defs></svg><span class="brand">ResumeForge</span></span>
+<nav class="menu"><button id="dopen">Editor &amp; Settings</button><button id="tplchoose">Change Template</button></nav>
+<span class="mspacer"></span>
+<div class="menu filegrp"><button id="rsave">Save</button><button id="rreset">Start Over</button><button class="primary" id="rdl2">Download</button></div>
+</div>
+<div class="pmask" id="pmask"></div>
+<div id="cmodal" hidden><div class="cbox"><p id="cmsg"></p><div class="crow"><button id="cno">Cancel</button><button id="cyes">Yes, continue</button></div></div></div>
+<div id="startScreen" role="dialog" aria-label="Welcome">
+<div class="ssbox">
+<svg class="sslogo" viewBox="0 0 32 32" aria-hidden="true"><rect x="2" y="2" width="28" height="28" rx="8" fill="url(#lg2)"/><circle cx="16" cy="12" r="2.4" fill="#0a0e1a"/><rect x="11" y="16.4" width="10" height="1.6" rx="0.8" fill="#0a0e1a"/><rect x="11" y="19.4" width="10" height="1.6" rx="0.8" fill="#0a0e1a"/><rect x="11" y="22.4" width="6.5" height="1.6" rx="0.8" fill="#0a0e1a"/><defs><linearGradient id="lg2" x1="0" y1="0" x2="32" y2="32"><stop offset="0" stop-color="#3ec9ff"/><stop offset="1" stop-color="#7c6cf6"/></linearGradient></defs></svg>
+<p class="ssbrand">ResumeForge</p>
+<h1>Build a resume that gets noticed</h1>
+<p class="sslead">Pick a professional template, edit it right on the page, and download it — all in your browser, nothing to install.</p>
+<div class="ssfeat">
+<div class="ssf"><span>🎨</span>4 templates, full color &amp; font control</div>
+<div class="ssf"><span>📐</span>Add, remove and rearrange any section</div>
+<div class="ssf"><span>💾</span>Auto-saves on this device until you delete it</div>
+<div class="ssf"><span>⬇️</span>Download as HTML or print to PDF</div>
+</div>
+<button class="primary sscta" id="ssStart">Get Started →</button>
+</div></div>
 <div class="app" id="rsapp">
 <section class="panel" aria-label="Design controls">
-<h2>Tool Studio</h2><p>Click any text on the resume to edit it, including section titles.</p>
+<button class="pclose" id="pclose" aria-label="Close panel">×</button><h2>Editor &amp; Settings</h2><p>Click any text on the resume to edit it, including section titles.</p>
+<div class="ptabs"><button class="ptb" data-pt="design" aria-pressed="true">Design &amp; Layout</button><button class="ptb" data-pt="data" aria-pressed="false">My Data</button></div>
+<div id="pdDesign">
 <h3>Template</h3>
 <div class="opts" id="tpl"><button data-v="t-classic">Classic</button><button data-v="t-sidebar">Sidebar</button><button data-v="t-bold">Bold</button><button data-v="t-minimal">Minimal</button></div>
 <h3>Color theme</h3>
@@ -97,21 +179,16 @@ button:focus-visible,select:focus-visible{outline:2px solid #2a6df4;outline-offs
 <select id="font"><option value="Inter,system-ui,sans-serif">Inter (clean sans)</option><option value="Lora,Georgia,serif">Lora (serif)</option><option value="'Source Sans 3',Arial,sans-serif">Source Sans</option><option value="'Space Grotesk',Arial,sans-serif">Space Grotesk</option></select>
 <h3>Text size</h3>
 <input type="range" id="fs" min="12" max="16" step="0.5" value="14" aria-label="Text size">
-<h3>Profile photo</h3>
-<label><input type="checkbox" id="pshow" checked> Show photo section</label>
-<div class="opts" style="margin-top:6px"><button onclick="document.getElementById('pf').click()">Upload photo</button><button id="pfx">Remove</button></div>
-<input type="file" id="pf" accept="image/*" hidden>
-<label class="sl">Size <input type="range" id="psz" min="60" max="240" value="96"></label>
-<select id="pshape" aria-label="Photo shape"><option value="circle">Shape: Circle</option><option value="rounded">Shape: Rounded square</option><option value="square">Shape: Square</option><option value="portrait">Shape: Portrait</option><option value="oval">Shape: Oval</option></select>
-<label class="sl"><input type="checkbox" id="pbd"> Border in theme color</label>
-<select id="ppos" aria-label="Quick position"><option value="">Quick position…</option><option value="l">Top left</option><option value="c">Top center</option><option value="r">Top right</option></select>
-<p style="margin-top:6px">Drag the photo on the resume to place it anywhere.</p>
+<h3>Bullet style</h3>
+<select id="bls" aria-label="Bullet style"><option value="disc">Disc •</option><option value="circle">Circle ○</option><option value="square">Square ■</option><option value='"– "'>Dash –</option><option value='"→ "'>Arrow →</option><option value='"✓ "'>Check ✓</option><option value="decimal">Numbers 1. 2. 3.</option></select>
 <h3>Spacing and sizes (px)</h3>
 <label class="sl">Page margin <input type="range" data-sp="pp" min="16" max="70"></label>
 <label class="sl">Header padding <input type="range" data-sp="hp" min="8" max="70"></label>
 <label class="sl">Space below header <input type="range" data-sp="hg" min="0" max="60"></label>
 <label class="sl">Space between sections <input type="range" data-sp="sg" min="6" max="50"></label>
-<label class="sl">Space between items <input type="range" data-sp="ig" min="2" max="30"></label>
+<label class="sl">Space between items (margin) <input type="range" data-sp="ig" min="0" max="40"></label>
+<label class="sl">Item inner padding <input type="range" data-sp="ip" min="0" max="24"></label>
+<label class="sl">Gap between lines in an item <input type="range" data-sp="pg" min="0" max="16"></label>
 <label class="sl">Header min height (0 = auto) <input type="range" data-sp="hh" min="0" max="300"></label>
 <label class="sl">Name size <input type="range" data-sp="h1s" min="18" max="70"></label>
 <label class="sl">Job title size <input type="range" data-sp="rs" min="10" max="30"></label>
@@ -121,7 +198,19 @@ button:focus-visible,select:focus-visible{outline:2px solid #2a6df4;outline-offs
 <div class="sw"><label>Background <input type="color" id="hbg" value="#1f4e79"></label><label>Text <input type="color" id="htx" value="#ffffff"></label><button id="hrs" style="width:auto;height:auto;border-radius:8px;padding:5px 9px;background:none;color:var(--ink)">Reset</button></div>
 <h3>Add a section</h3>
 <div class="opts"><select id="secwhere"><option value="main">Main column</option><option value="side">Side column</option></select><button id="addsec">+ Add section</button></div>
-<p style="margin-top:6px">Inside any section, use its + button to add subsections. Hover a section to drag, move or remove it.</p>
+<p style="margin-top:6px">Inside any section, use its + button to add subsections and fields. Hover a section to drag, move or remove it.</p>
+</div><div id="pdData" hidden>
+<h3>Saved templates</h3>
+<div class="opts"><input id="tplname" placeholder="Template name" style="border:1px solid var(--line);background:#0d1226;color:var(--ink);border-radius:8px;padding:6px"><button id="tplsave">Save as new</button></div>
+<select id="tpllist" style="margin-top:6px"><option value="">Choose a saved template…</option></select>
+<div class="opts" style="margin-top:6px"><button id="tplload">Load</button><button id="tpldel">Delete</button></div>
+<h3>My info (autofill)</h3>
+<div class="opts"><input id="pfN" placeholder="Full name" style="grid-column:1/3;border:1px solid var(--line);background:#0d1226;color:var(--ink);border-radius:8px;padding:6px"><input id="pfT" placeholder="Job title" style="grid-column:1/3;border:1px solid var(--line);background:#0d1226;color:var(--ink);border-radius:8px;padding:6px"><input id="pfE" placeholder="Email" style="border:1px solid var(--line);background:#0d1226;color:var(--ink);border-radius:8px;padding:6px"><input id="pfP" placeholder="Phone" style="border:1px solid var(--line);background:#0d1226;color:var(--ink);border-radius:8px;padding:6px"><input id="pfL" placeholder="City, Country" style="grid-column:1/3;border:1px solid var(--line);background:#0d1226;color:var(--ink);border-radius:8px;padding:6px"></div>
+<div class="opts" style="margin-top:6px"><button id="pfsave">Save my info</button><button id="pffill">Autofill header</button></div>
+<h3>Reset</h3>
+<p style="margin-top:0">"Start over" (top menu) clears the auto-saved resume on this device and returns to the default template.</p>
+</div>
+<h3 style="margin-top:22px">Export</h3>
 <div class="act">
 <button class="primary" id="dl">Download resume (HTML)</button>
 <button id="pr">Print / Save as PDF</button>
@@ -129,8 +218,7 @@ button:focus-visible,select:focus-visible{outline:2px solid #2a6df4;outline-offs
 </div>
 </section>
 <div class="stage"><div id="resume" class="t-classic">
-<div class="pw" title="Drag to move"><img class="photo" alt="Profile photo" data-empty="1" src="data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23ddd'/%3E%3Ccircle cx='50' cy='38' r='18' fill='%23aaa'/%3E%3Cellipse cx='50' cy='90' rx='32' ry='26' fill='%23aaa'/%3E%3C/svg%3E"></div>
-<header><h1 contenteditable>Your Name</h1><p class="role" contenteditable>Job Title</p><p class="contact" contenteditable>you@email.com &nbsp;|&nbsp; +91 00000 00000 &nbsp;|&nbsp; City, Country</p></header>
+<header><h1 contenteditable>Your Name</h1><p class="role" contenteditable>Job Title</p><p class="contact" contenteditable>you@email.com &nbsp;|&nbsp; +91 00000 00000 &nbsp;|&nbsp; City, Country</p><button class="add ui" id="hln" style="margin-top:4px">+ Add line</button></header>
 <main>
 <section><h2>Summary</h2><p contenteditable>Write two or three sentences about your experience, strengths and what you want to do next.</p></section>
 <section><h2>Experience</h2><div id="exp">
@@ -143,7 +231,7 @@ button:focus-visible,select:focus-visible{outline:2px solid #2a6df4;outline-offs
 <section><h2>Skills</h2><div id="sk"><p contenteditable>Skill one</p><p contenteditable>Skill two</p><p contenteditable>Skill three</p></div><button class="add ui" data-t="sk">+ Add skill</button></section>
 </aside>
 </div></div></div>
-<div class="app" id="pdfapp" hidden>
+<div class="app" id="pdfapp" hidden style="display:none!important">
 <section class="panel" aria-label="PDF editor controls"><h2>PDF editor</h2><p>Upload a PDF, click any text and change it. The file stays in your browser.</p>
 <div class="act" style="margin-top:0"><button class="primary" onclick="document.getElementById('pdfin').click()">Upload PDF</button><button id="addbox" aria-pressed="false">Add or replace text (draw a box)</button></div>
 <input type="file" id="pdfin" accept="application/pdf" hidden>
@@ -164,15 +252,9 @@ const sw=$('#sw');colors.forEach(c=>{const b=document.createElement('button');b.
 const ci=document.createElement('input');ci.type='color';ci.title='Custom color';ci.oninput=()=>{accent=ci.value;apply()};sw.appendChild(ci);
 document.querySelectorAll('#tpl button').forEach(b=>b.onclick=()=>{tpl=b.dataset.v;apply();spDefaults()});
 $('#font').onchange=apply;$('#fs').oninput=apply;
-const pw=R.querySelector('.pw'),PH=R.querySelector('.photo').src;let pd=null;
-pw.onpointerdown=e=>{e.preventDefault();pw.setPointerCapture(e.pointerId);pd=[e.clientX-pw.offsetLeft,e.clientY-pw.offsetTop];pw.classList.add('drag')};
-pw.onpointermove=e=>{if(!pd)return;pw.style.left=Math.max(0,Math.min(R.offsetWidth-pw.offsetWidth,e.clientX-pd[0]))+'px';pw.style.top=Math.max(0,Math.min(R.offsetHeight-pw.offsetHeight,e.clientY-pd[1]))+'px'};
-pw.onpointerup=pw.onpointercancel=()=>{pd=null;pw.classList.remove('drag')};
-$('#ppos').onchange=e=>{const v=e.target.value;if(!v)return;const w=pw.offsetWidth,pp=parseInt(R.style.getPropertyValue('--pp'))||44;pw.style.left=(v==='l'?pp:v==='c'?(R.offsetWidth-w)/2:R.offsetWidth-w-pp)+'px';pw.style.top='24px';e.target.value=''};
-const SH={circle:['50%',1],rounded:['18%',1],square:['0',1],portrait:['8%',1.25],oval:['50%',1.25]};
-function pApply(){const s=SH[$('#pshape').value];R.style.setProperty('--ps',$('#psz').value+'px');R.style.setProperty('--pr',s[0]);R.style.setProperty('--pa',s[1]);R.style.setProperty('--pb',$('#pbd').checked?'3px':'0px');pw.hidden=!$('#pshow').checked}
-['pshow','psz','pshape','pbd'].forEach(i=>{$('#'+i).addEventListener('input',pApply);$('#'+i).addEventListener('change',pApply)});
-const TD={'t-classic':{pp:44,hp:16,hg:0,sg:22,ig:12,h1s:34,rs:16,h2s:13,hh:0},'t-sidebar':{pp:44,hp:28,hg:0,sg:22,ig:12,h1s:34,rs:16,h2s:13,hh:0},'t-bold':{pp:44,hp:30,hg:0,sg:22,ig:12,h1s:34,rs:16,h2s:13,hh:0},'t-minimal':{pp:44,hp:16,hg:0,sg:22,ig:12,h1s:40,rs:16,h2s:13,hh:0}};
+const OP='<option value="line">Text line</option><option value="text">Text area</option><option value="bul">Bullet list</option><option value="link">Link</option></select>',AFI='<select class="af" aria-label="Add field"><option value="">+ Add field...</option><option value="date">Date</option><option value="sub">Subtitle</option>'+OP,AFS='<select class="af" aria-label="Add field"><option value="">+ Add field...</option>'+OP;
+function pApply(){}
+const TD={'t-classic':{pp:44,hp:16,hg:0,sg:22,ig:12,h1s:34,rs:16,h2s:13,hh:0,ip:0,pg:6},'t-sidebar':{pp:44,hp:28,hg:0,sg:22,ig:12,h1s:34,rs:16,h2s:13,hh:0,ip:0,pg:6},'t-bold':{pp:44,hp:30,hg:0,sg:22,ig:12,h1s:34,rs:16,h2s:13,hh:0,ip:0,pg:6},'t-minimal':{pp:44,hp:16,hg:0,sg:22,ig:12,h1s:40,rs:16,h2s:13,hh:0,ip:0,pg:6}};
 function spApply(){document.querySelectorAll('[data-sp]').forEach(i=>R.style.setProperty('--'+i.dataset.sp,i.value+'px'))}
 function spDefaults(){const d=TD[tpl];document.querySelectorAll('[data-sp]').forEach(i=>i.value=d[i.dataset.sp]);spApply()}
 document.querySelectorAll('[data-sp]').forEach(i=>i.oninput=spApply);$('#spr').onclick=spDefaults;
@@ -181,16 +263,48 @@ R.addEventListener('dragstart',e=>{const h=e.target.closest&&e.target.closest('.
 R.addEventListener('dragend',()=>{if(dragSec)dragSec.style.opacity='';dragSec=null});
 R.addEventListener('dragover',e=>{if(!dragSec)return;const box=e.target.closest('main,aside');if(!box)return;e.preventDefault();const after=[...box.querySelectorAll(':scope>section')].filter(x=>x!==dragSec).find(x=>{const q=x.getBoundingClientRect();return e.clientY<q.top+q.height/2});after?box.insertBefore(dragSec,after):box.appendChild(dragSec)});
 R.addEventListener('drop',e=>{if(dragSec)e.preventDefault()});
-const ITEM='<div class="item"><div class="row"><span contenteditable>Subsection title</span><span contenteditable>Date</span></div><p class="sub" contenteditable>Subtitle</p><p contenteditable>Details go here.</p><button class="x ui" title="Remove">×</button></div>';
-function prep(s){s.querySelector('h2').contentEditable=true;if(!s.querySelector('.tools')){const t=document.createElement('div');t.className='tools ui';t.innerHTML='<span class="dh" draggable="true" title="Drag to move section">⠿ Move</span><button class="mv" data-d="-1" title="Move up">▲</button><button class="mv" data-d="1" title="Move down">▼</button><button class="rs">Remove</button>';s.appendChild(t)}}
-R.querySelectorAll('section').forEach(prep);
+const ITEM='<div class="item"><div class="row"><span contenteditable>Subsection title</span><span contenteditable>Date</span></div><p class="sub" contenteditable>Subtitle</p><p contenteditable>Details go here.</p><div class="itools ui">'+AFI+'</div><button class="x ui" title="Remove">×</button></div>';
+const BT='<div class="blk"><div class="tb" contenteditable>Type anything here...</div><button class="x ui" title="Remove">×</button></div>',BL='<div class="blk"><ul class="bl" contenteditable><li>Point one</li><li>Point two</li></ul><button class="x ui" title="Remove">×</button></div>';
+function fit(it){if(!it.querySelector('.itools')){const d=document.createElement('div');d.className='itools ui';d.innerHTML=AFI;it.appendChild(d)}}
+document.addEventListener('change',e=>{const sel=e.target.closest&&e.target.closest('select.af');if(!sel||!sel.value)return;const v=sel.value;sel.value='';const it=sel.closest('.item'),host=it||sel.closest('section'),bef=it?it.querySelector('.itools'):(host.querySelector('.add')||host.querySelector('.tools')),mk={line:'<p contenteditable>Text line</p>',link:'<p class="lnk" contenteditable>www.example.com</p>',text:BT,bul:BL};let el;
+if(v==='date'){let row=it.querySelector('.row');if(!row){row=document.createElement('div');row.className='row';it.prepend(row)}row.insertAdjacentHTML('beforeend','<span contenteditable>Date</span>');el=row.lastElementChild}
+else if(v==='sub'){const row=it.querySelector('.row'),h='<p class="sub" contenteditable>Subtitle</p>';if(row){row.insertAdjacentHTML('afterend',h);el=row.nextElementSibling}else{it.insertAdjacentHTML('afterbegin',h);el=it.firstElementChild}}
+else{bef.insertAdjacentHTML('beforebegin',mk[v]);el=bef.previousElementSibling}
+const f=el.matches('[contenteditable]')?el:el.querySelector('[contenteditable]');if(f)f.focus()});
+let lastOwner=null;function ownerOf(t){if(!t||!t.closest)return null;return t.closest('.item')||t.closest('section')}
+function setOwner(o){if(o===lastOwner)return;if(lastOwner)lastOwner.classList.remove('hshow');if(o)o.classList.add('hshow');lastOwner=o}
+R.addEventListener('mouseover',e=>setOwner(ownerOf(e.target)));
+R.addEventListener('mouseleave',()=>setOwner(null));
+R.addEventListener('focusin',e=>setOwner(ownerOf(e.target)));
+const fx=document.createElement('button');fx.id='fx';fx.textContent='×';fx.title='Delete this field';fx.hidden=true;document.body.appendChild(fx);let fcur=null,ft=null;
+/* Click on empty resume space -> quick "add section" menu */
+const emenu=document.createElement('div');emenu.id='emenu';emenu.innerHTML='<button data-e="main">+ Add section (main)</button><button data-e="side">+ Add section (side)</button>';document.body.appendChild(emenu);
+function hideEmenu(){emenu.style.display='none'}
+document.addEventListener('click',e=>{
+if(e.target.closest('#emenu'))return;
+const isEmpty=e.target===R||e.target.tagName==='MAIN'||e.target.tagName==='ASIDE'||e.target.tagName==='HEADER';
+if(isEmpty){emenu.style.left=e.clientX+'px';emenu.style.top=e.clientY+'px';emenu.style.display='flex'}
+else hideEmenu()});
+window.addEventListener('scroll',hideEmenu,true);
+emenu.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;const v=b.dataset.e;const s=document.createElement('section');s.innerHTML='<h2>New section</h2><div class="list">'+ITEM+'</div><button class="add ui">+ Add subsection</button>';prep(s);R.querySelector(v==='side'?'aside':'main').appendChild(s);hideEmenu()});
+function ftarget(t){if(!t.closest)return null;const el=t.closest('[contenteditable]');if(!el||!R.contains(el)||el.closest('.tools')||el.matches('h1,h2'))return null;return el.closest('.blk')||el}
+function showFx(el){fcur=el;const q=el.getBoundingClientRect();fx.style.left=(q.right-9)+'px';fx.style.top=(q.top-9)+'px';fx.hidden=false;clearTimeout(ft)}
+R.addEventListener('mouseover',e=>{const t=ftarget(e.target);if(t)showFx(t)});
+R.addEventListener('focusin',e=>{const t=ftarget(e.target);if(t)showFx(t)});
+R.addEventListener('mouseout',()=>{ft=setTimeout(()=>fx.hidden=true,400)});
+fx.onmouseenter=()=>clearTimeout(ft);fx.onmouseleave=()=>{ft=setTimeout(()=>fx.hidden=true,300)};
+window.addEventListener('scroll',()=>fx.hidden=true,true);
+fx.onclick=()=>{if(!fcur)return;const row=fcur.parentElement;fcur.remove();if(row&&row.classList.contains('row')&&!row.children.length)row.remove();fx.hidden=true;fcur=null};
+$('#hln').onclick=()=>{const c=R.querySelector('header .contact');c.insertAdjacentHTML('afterend','<p contenteditable>New line</p>');c.nextElementSibling.focus()};
+$('#bls').onchange=e=>R.style.setProperty('--ls',e.target.value);
+function prep(s){s.querySelector('h2').contentEditable=true;if(!s.querySelector('.tools')){const t=document.createElement('div');t.className='tools ui';t.innerHTML='<span class="dh" draggable="true" title="Drag to move section">⠿ Move</span><button class="mv" data-d="-1" title="Move up">▲</button><button class="mv" data-d="1" title="Move down">▼</button>'+AFS+'<button class="rs">Remove</button>';s.appendChild(t)}}
+R.querySelectorAll('section').forEach(prep);R.querySelectorAll('.item').forEach(fit);
 $('#addsec').onclick=()=>{const s=document.createElement('section');s.innerHTML='<h2>New section</h2><div class="list">'+ITEM+'</div><button class="add ui">+ Add subsection</button>';prep(s);R.querySelector($('#secwhere').value==='side'?'aside':'main').appendChild(s)};
-$('#pf').onchange=e=>{const f=e.target.files[0];if(!f)return;const img=new Image();img.onload=()=>{const n=400,c=document.createElement('canvas');c.width=c.height=n;const m=Math.min(img.width,img.height);c.getContext('2d').drawImage(img,(img.width-m)/2,(img.height-m)/2,m,m,0,0,n,n);const p=R.querySelector('.photo');p.src=c.toDataURL('image/jpeg',.85);delete p.dataset.empty;$('#pshow').checked=true;pw.hidden=false};img.src=URL.createObjectURL(f)};
-$('#pfx').onclick=()=>{const p=R.querySelector('.photo');p.src=PH;p.dataset.empty=1;$('#pf').value=''};
 $('#hbg').oninput=e=>R.style.setProperty('--hbg',e.target.value);
 $('#htx').oninput=e=>R.style.setProperty('--htxt',e.target.value);
 $('#hrs').onclick=()=>{R.style.removeProperty('--hbg');R.style.removeProperty('--htxt')};
 document.addEventListener('click',e=>{
+const bt=e.target.closest('.bul,.ta,.at,.al');if(bt){const it=bt.closest('.item'),host=it||bt.closest('section'),bef=it?it.querySelector('.itools'):(host.querySelector('.add')||host.querySelector('.tools'));bef.insertAdjacentHTML('beforebegin',bt.matches('.bul,.al')?BL:BT);const f=bef.previousElementSibling.querySelector('[contenteditable]');if(f)f.focus();return}
 const rs=e.target.closest('.rs');if(rs){rs.closest('section').remove();return}
 const mv=e.target.closest('.mv');if(mv){const sc=mv.closest('section'),d=+mv.dataset.d,t=d<0?sc.previousElementSibling:sc.nextElementSibling;if(t&&t.tagName==='SECTION')d<0?sc.parentElement.insertBefore(sc,t):sc.parentElement.insertBefore(t,sc);return}
 const x=e.target.closest('.x');if(x){x.parentElement.remove();return}
@@ -200,7 +314,7 @@ if(box.id==='sk'){box.insertAdjacentHTML('beforeend','<p contenteditable>New ski
 const last=box.lastElementChild;if(last){const c=last.cloneNode(true);box.appendChild(c)}});
 $('#pr').onclick=()=>window.print();
 async function dl(){
-const c=R.cloneNode(true);c.querySelectorAll('.ui').forEach(n=>n.remove());if(R.querySelector('.photo').dataset.empty)c.querySelector('.pw').remove();c.querySelectorAll('[contenteditable]').forEach(n=>n.removeAttribute('contenteditable'));
+const c=R.cloneNode(true);c.querySelectorAll('.ui').forEach(n=>n.remove());c.querySelectorAll('[contenteditable]').forEach(n=>n.removeAttribute('contenteditable'));
 const html='<!doctype html><html><head><meta charset="utf-8"><title>Resume</title><link rel="stylesheet" href="'+document.querySelector('link[rel=stylesheet]').href+'"><style>'+$('#rcss').textContent+'body{margin:0;background:#eee}#resume{margin:0 auto}@media print{body{background:#fff}@page{margin:0}}</style></head><body>'+c.outerHTML+'</body></html>';
 const m=$('#msg');
 try{const d=window.claude&&await claude.use('downloads');
@@ -257,5 +371,51 @@ bx.innerText.split('\n').forEach((ln,i)=>{const tx=ln.replace(/[^ -~\u00a0-\u00f
 await saveFile(pdfName.replace(/\.pdf$/i,'')+'-edited.pdf',await doc.save(),'application/pdf');
 }catch(err){pmsg(err&&err.code==='declined'?'Save cancelled.':'Could not build the PDF: '+(err.message||err))}};
 $('#dl').onclick=dl;apply();spDefaults();pApply();
+function fitScale(){if(window.innerWidth>900){R.style.transform='';return}const avail=document.querySelector('.stage').clientWidth-8;R.style.transform='scale('+Math.min(1,avail/794)+')'}
+window.addEventListener('resize',fitScale);fitScale();
+const panel=document.querySelector('#rsapp .panel');
+$('#dopen').onclick=()=>{panel.classList.add('open');$('#pmask').classList.add('open')};
+function closeP(){panel.classList.remove('open');$('#pmask').classList.remove('open')}
+$('#pclose').onclick=closeP;$('#pmask').onclick=closeP;
+$('#rdl2').onclick=dl;
+const LS_KEY='toolstudio_resume_v1';const ORIG=R.outerHTML;const ORIG_SETTINGS={tpl,accent,font:$('#font').value,fs:$('#fs').value,hbg:'',htx:'',bls:'disc',sp:{}};
+document.querySelectorAll('[data-sp]').forEach(i=>ORIG_SETTINGS.sp[i.dataset.sp]=i.value);
+function collect(){const set={tpl,accent,font:$('#font').value,fs:$('#fs').value,hbg:R.style.getPropertyValue('--hbg'),htx:R.style.getPropertyValue('--htxt'),bls:$('#bls').value,sp:{}};
+document.querySelectorAll('[data-sp]').forEach(i=>set.sp[i.dataset.sp]=i.value);return{html:R.outerHTML,settings:set}}
+function restore(d){try{const t=document.createElement('div');t.innerHTML=d.html;const nr=t.firstElementChild;nr.querySelectorAll('.pw,.photo,img').forEach(el=>el.remove());R.innerHTML=nr.innerHTML;R.className=nr.className;R.removeAttribute('style');const s=d.settings;
+tpl=s.tpl;accent=s.accent;$('#font').value=s.font;$('#fs').value=s.fs;$('#bls').value=s.bls;
+Object.keys(s.sp||{}).forEach(k=>{const el=document.querySelector('[data-sp="'+k+'"]');if(el)el.value=s.sp[k]});
+apply();spApply();pApply();R.style.setProperty('--ls',s.bls);if(s.hbg)R.style.setProperty('--hbg',s.hbg);if(s.htx)R.style.setProperty('--htxt',s.htx);
+R.querySelectorAll('section').forEach(prep);R.querySelectorAll('.item').forEach(fit);fitScale();}catch(e){}}
+function save(){try{localStorage.setItem(LS_KEY,JSON.stringify(collect()));pmsgR('Saved on this device. It will stay until you tap Start over or clear browser data.')}catch(e){pmsgR('Could not save (private/incognito browsing blocks this).')}}
+function pmsgR(t){const m=document.createElement('span');/*inline toast*/const b=$('#rsave');b.title=t;b.textContent='Saved ✓';setTimeout(()=>b.textContent='Save',1500)}
+$('#rsave').onclick=save;
+function askConfirm(msg){return new Promise(res=>{$('#cmsg').textContent=msg;$('#cmodal').hidden=false;const yes=$('#cyes'),no=$('#cno');function done(v){$('#cmodal').hidden=true;yes.removeEventListener('click',onY);no.removeEventListener('click',onN);res(v)}function onY(){done(true)}function onN(){done(false)}yes.addEventListener('click',onY);no.addEventListener('click',onN)})}
+$('#rreset').onclick=async()=>{if(!(await askConfirm('Start over? This clears your saved resume on this device and cannot be undone.')))return;localStorage.removeItem(LS_KEY);restore({html:ORIG,settings:ORIG_SETTINGS})};
+try{const raw=localStorage.getItem(LS_KEY);if(raw){const parsed=JSON.parse(raw);restore(parsed);$('#startScreen').hidden=true;save()}}catch(e){}
+
+const SS=$('#startScreen');
+$('#ssStart').onclick=()=>{SS.hidden=true};
+$('#tplchoose').onclick=()=>{SS.hidden=false};
+document.querySelectorAll('.ptb').forEach(b=>b.onclick=()=>{document.querySelectorAll('.ptb').forEach(x=>x.setAttribute('aria-pressed',x===b));$('#pdDesign').hidden=b.dataset.pt!=='design';$('#pdData').hidden=b.dataset.pt!=='data'});
+
+/* ---- Named templates (saved until you delete them) ---- */
+const TPL_KEY='toolstudio_templates_v1';
+function tplStore(){try{return JSON.parse(localStorage.getItem(TPL_KEY)||'{}')}catch(e){return{}}}
+function tplRefresh(){const st=tplStore(),sel=$('#tpllist');sel.innerHTML='<option value="">Choose a saved template…</option>'+Object.keys(st).map(n=>'<option>'+n.replace(/</g,'&lt;')+'</option>').join('')}
+$('#tplsave').onclick=()=>{const n=$('#tplname').value.trim();if(!n){pmsgR2('Give it a name first.');return}const st=tplStore();st[n]=collect();try{localStorage.setItem(TPL_KEY,JSON.stringify(st));tplRefresh();$('#tplname').value='';pmsgR2('Saved as "'+n+'".')}catch(e){pmsgR2('Could not save.')}};
+$('#tplload').onclick=()=>{const n=$('#tpllist').value;if(!n)return;const st=tplStore();if(st[n])restore(st[n])};
+$('#tpldel').onclick=async()=>{const n=$('#tpllist').value;if(!n)return;if(!(await askConfirm('Delete the template "'+n+'"? This cannot be undone.')))return;const st=tplStore();delete st[n];localStorage.setItem(TPL_KEY,JSON.stringify(st));tplRefresh()};
+function pmsgR2(t){const b=$('#tplsave');b.title=t;const o=b.textContent;b.textContent=t.length<14?t:'Done';setTimeout(()=>b.textContent=o,1500)}
+tplRefresh();
+
+/* ---- Profile info + autofill (saved until you delete it) ---- */
+const PF_KEY='toolstudio_profile_v1';
+try{const pf=JSON.parse(localStorage.getItem(PF_KEY)||'{}');['N','T','E','P','L'].forEach(k=>{if(pf[k])$('#pf'+k).value=pf[k]})}catch(e){}
+$('#pfsave').onclick=()=>{const pf={};['N','T','E','P','L'].forEach(k=>pf[k]=$('#pf'+k).value);try{localStorage.setItem(PF_KEY,JSON.stringify(pf));pmsgR2('Info saved.')}catch(e){pmsgR2('Could not save.')}};
+$('#pffill').onclick=()=>{const h=R.querySelector('header');if(!h)return;const n=h.querySelector('h1'),ro=h.querySelector('.role'),c=h.querySelector('.contact');
+if(n&&$('#pfN').value)n.textContent=$('#pfN').value;if(ro&&$('#pfT').value)ro.textContent=$('#pfT').value;
+const bits=[$('#pfE').value,$('#pfP').value,$('#pfL').value].filter(Boolean);if(c&&bits.length)c.textContent=bits.join('  |  ');
+pmsgR2('Filled in.')};
 </script>
 </body></html>
