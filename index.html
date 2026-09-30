@@ -41,7 +41,15 @@ body{margin:0;min-height:100vh;background:radial-gradient(circle at 15% 0%,#1a1f
 .panel h2{font-size:19px;margin:0 0 4px;font-weight:700;letter-spacing:.02em;background:linear-gradient(90deg,var(--glow2),var(--glow));-webkit-background-clip:text;background-clip:text;color:transparent}
 .ptabs{display:flex;gap:4px;margin:12px 0 4px;background:rgba(255,255,255,.03);border:1px solid var(--line);border-radius:10px;padding:3px}
 .ptb{flex:1;font:12px Inter,sans-serif;font-weight:600;padding:7px 4px;border:0;background:none;color:var(--mute);border-radius:8px;cursor:pointer}
-.ptb[aria-pressed=true]{background:linear-gradient(90deg,var(--glow),var(--glow2));color:#0a0e1a}.panel p{margin:0 0 14px;color:var(--mute);font-size:13px}
+.ptb[aria-pressed=true]{background:linear-gradient(90deg,var(--glow),var(--glow2));color:#0a0e1a}
+.panel h4{font-size:11px;margin:14px 0 5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--mute)}
+.pfhint{text-transform:none;letter-spacing:0;font-weight:400}
+.pfi{width:100%;font:13px Inter,sans-serif;border:1px solid var(--line);background:#0d1226;color:var(--ink);border-radius:8px;padding:6px;box-sizing:border-box;resize:vertical}
+.pfrow{border:1px solid var(--line);border-radius:10px;padding:8px;margin-bottom:8px;display:grid;gap:5px;background:rgba(255,255,255,.02)}
+.pfrow input,.pfrow textarea{width:100%;font:12px Inter,sans-serif;border:1px solid var(--line);background:#0d1226;color:var(--ink);border-radius:6px;padding:5px;box-sizing:border-box;resize:vertical}
+.pfdel{align-self:flex-end;font:11px Inter,sans-serif;border:1px dashed #aaa;background:none;color:#e5484d;border-radius:6px;padding:3px 8px;cursor:pointer}
+.pfadd{width:100%;font:inherit;padding:7px;border:1px dashed var(--line);background:none;color:var(--ink);border-radius:8px;cursor:pointer;margin-bottom:4px}
+.pfadd:hover{border-color:var(--glow2)}.panel p{margin:0 0 14px;color:var(--mute);font-size:13px}
 .panel h3{font-size:11px;margin:18px 0 7px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--glow2)}
 .opts{display:grid;grid-template-columns:1fr 1fr;gap:6px}
 .opts button,.act button{font:inherit;padding:9px;border:1px solid var(--line);background:rgba(255,255,255,.02);color:var(--ink);border-radius:10px;cursor:pointer;transition:border-color .15s,box-shadow .15s}
@@ -204,9 +212,23 @@ button:focus-visible,select:focus-visible{outline:2px solid var(--glow2);outline
 <div class="opts"><input id="tplname" placeholder="Template name" style="border:1px solid var(--line);background:#0d1226;color:var(--ink);border-radius:8px;padding:6px"><button id="tplsave">Save as new</button></div>
 <select id="tpllist" style="margin-top:6px"><option value="">Choose a saved template…</option></select>
 <div class="opts" style="margin-top:6px"><button id="tplload">Load</button><button id="tpldel">Delete</button></div>
-<h3>My info (autofill)</h3>
-<div class="opts"><input id="pfN" placeholder="Full name" style="grid-column:1/3;border:1px solid var(--line);background:#0d1226;color:var(--ink);border-radius:8px;padding:6px"><input id="pfT" placeholder="Job title" style="grid-column:1/3;border:1px solid var(--line);background:#0d1226;color:var(--ink);border-radius:8px;padding:6px"><input id="pfE" placeholder="Email" style="border:1px solid var(--line);background:#0d1226;color:var(--ink);border-radius:8px;padding:6px"><input id="pfP" placeholder="Phone" style="border:1px solid var(--line);background:#0d1226;color:var(--ink);border-radius:8px;padding:6px"><input id="pfL" placeholder="City, Country" style="grid-column:1/3;border:1px solid var(--line);background:#0d1226;color:var(--ink);border-radius:8px;padding:6px"></div>
-<div class="opts" style="margin-top:6px"><button id="pfsave">Save my info</button><button id="pffill">Autofill header</button></div>
+<h3>My Profile</h3>
+<p style="margin-top:0">Fill this in once. It's saved on this device and can fill in your name, summary, skills, experience, education and projects on any template with one click.</p>
+<div class="opts"><input id="pfN" placeholder="Full name" class="pfi" style="grid-column:1/3"><input id="pfT" placeholder="Job title" class="pfi" style="grid-column:1/3"><input id="pfE" placeholder="Email" class="pfi"><input id="pfP" placeholder="Phone" class="pfi"><input id="pfL" placeholder="City, Country" class="pfi" style="grid-column:1/3"></div>
+<h4>Summary</h4>
+<textarea id="pfSum" class="pfi" rows="3" placeholder="Two or three sentences about you"></textarea>
+<h4>Skills <span class="pfhint">(one per line)</span></h4>
+<textarea id="pfSkills" class="pfi" rows="3" placeholder="JavaScript&#10;Project management&#10;..."></textarea>
+<h4>Experience</h4>
+<div id="pfExp"></div>
+<button id="pfExpAdd" class="pfadd">+ Add experience</button>
+<h4>Education</h4>
+<div id="pfEdu"></div>
+<button id="pfEduAdd" class="pfadd">+ Add education</button>
+<h4>Projects</h4>
+<div id="pfProj"></div>
+<button id="pfProjAdd" class="pfadd">+ Add project</button>
+<div class="opts" style="margin-top:12px"><button id="pfsave">Save my info</button><button class="primary" id="pffill">Autofill this resume</button></div>
 <h3>Reset</h3>
 <p style="margin-top:0">"Start over" (top menu) clears the auto-saved resume on this device and returns to the default template.</p>
 </div>
@@ -411,11 +433,29 @@ tplRefresh();
 
 /* ---- Profile info + autofill (saved until you delete it) ---- */
 const PF_KEY='toolstudio_profile_v1';
-try{const pf=JSON.parse(localStorage.getItem(PF_KEY)||'{}');['N','T','E','P','L'].forEach(k=>{if(pf[k])$('#pf'+k).value=pf[k]})}catch(e){}
-$('#pfsave').onclick=()=>{const pf={};['N','T','E','P','L'].forEach(k=>pf[k]=$('#pf'+k).value);try{localStorage.setItem(PF_KEY,JSON.stringify(pf));pmsgR2('Info saved.')}catch(e){pmsgR2('Could not save.')}};
-$('#pffill').onclick=()=>{const h=R.querySelector('header');if(!h)return;const n=h.querySelector('h1'),ro=h.querySelector('.role'),c=h.querySelector('.contact');
-if(n&&$('#pfN').value)n.textContent=$('#pfN').value;if(ro&&$('#pfT').value)ro.textContent=$('#pfT').value;
-const bits=[$('#pfE').value,$('#pfP').value,$('#pfL').value].filter(Boolean);if(c&&bits.length)c.textContent=bits.join('  |  ');
-pmsgR2('Filled in.')};
+const escH=t=>(t||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+const pfRowT={exp:['Job title','Company','Dates (e.g. 2022 – Present)','Description'],edu:['Degree','School','Dates'],proj:['Project name','Link (optional)','Description']};
+function pfRowHTML(kind){const f=pfRowT[kind];return '<div class="pfrow">'+f.map((ph,i)=>i===f.length-1&&(kind==='exp'||kind==='proj')?'<textarea rows="2" placeholder="'+ph+'"></textarea>':'<input placeholder="'+ph+'">').join('')+'<button class="pfdel" type="button">Remove</button></div>'}
+['Exp','Edu','Proj'].forEach(K=>{$('#pf'+K+'Add').onclick=()=>$('#pf'+K).insertAdjacentHTML('beforeend',pfRowHTML(K.toLowerCase()))});
+document.addEventListener('click',e=>{const d=e.target.closest('.pfdel');if(d)d.closest('.pfrow').remove()});
+function pfRowsGet(id){return [...document.querySelectorAll('#'+id+' .pfrow')].map(row=>[...row.querySelectorAll('input,textarea')].map(i=>i.value))}
+function pfRowsSet(id,kind,rows){const box=$('#'+id);box.innerHTML='';(rows||[]).forEach(r=>{box.insertAdjacentHTML('beforeend',pfRowHTML(kind));const ins=box.lastElementChild.querySelectorAll('input,textarea');r.forEach((v,i)=>{if(ins[i])ins[i].value=v})})}
+function pfCollect(){return{N:$('#pfN').value,T:$('#pfT').value,E:$('#pfE').value,P:$('#pfP').value,L:$('#pfL').value,sum:$('#pfSum').value,skills:$('#pfSkills').value.split('\n').map(s=>s.trim()).filter(Boolean),exp:pfRowsGet('pfExp'),edu:pfRowsGet('pfEdu'),proj:pfRowsGet('pfProj')}}
+try{const pf=JSON.parse(localStorage.getItem(PF_KEY)||'{}');['N','T','E','P','L'].forEach(k=>{if(pf[k])$('#pf'+k).value=pf[k]});$('#pfSum').value=pf.sum||'';$('#pfSkills').value=(pf.skills||[]).join('\n');pfRowsSet('pfExp','exp',pf.exp);pfRowsSet('pfEdu','edu',pf.edu);pfRowsSet('pfProj','proj',pf.proj)}catch(e){}
+$('#pfsave').onclick=()=>{try{localStorage.setItem(PF_KEY,JSON.stringify(pfCollect()));pmsgR2('Info saved.')}catch(e){pmsgR2('Could not save.')}};
+function pfItemHTML(title,sub,date,desc){return '<div class="item"><div class="row"><span contenteditable>'+escH(title)+'</span><span contenteditable>'+escH(date)+'</span></div><p class="sub" contenteditable>'+escH(sub)+'</p>'+(desc?'<p contenteditable>'+escH(desc)+'</p>':'')+'<div class="itools ui">'+AFI+'</div><button class="x ui" title="Remove">×</button></div>'}
+function pfFindSection(re){return[...R.querySelectorAll('section')].find(s=>s.querySelector('h2')&&re.test(s.querySelector('h2').textContent))}
+$('#pffill').onclick=()=>{const pf=pfCollect();
+const h=R.querySelector('header');if(h){const n=h.querySelector('h1'),ro=h.querySelector('.role'),c=h.querySelector('.contact');
+if(n&&pf.N)n.textContent=pf.N;if(ro&&pf.T)ro.textContent=pf.T;const bits=[pf.E,pf.P,pf.L].filter(Boolean);if(c&&bits.length)c.textContent=bits.join('  |  ')}
+if(pf.sum){const s=pfFindSection(/summary/i);if(s){const p=s.querySelector('p');if(p)p.textContent=pf.sum}}
+if(pf.skills.length){const sk=R.querySelector('#sk');if(sk)sk.innerHTML=pf.skills.map(s=>'<p contenteditable>'+escH(s)+'</p>').join('')}
+if(pf.exp.length){const ex=R.querySelector('#exp');if(ex){ex.innerHTML=pf.exp.map(r=>pfItemHTML(r[0],r[1],r[2],r[3])).join('');ex.querySelectorAll('.item').forEach(fit)}}
+if(pf.edu.length){const ed=R.querySelector('#edu');if(ed){ed.innerHTML=pf.edu.map(r=>pfItemHTML(r[0],r[1],r[2],'')).join('');ed.querySelectorAll('.item').forEach(fit)}}
+if(pf.proj.length){let ps=pfFindSection(/projects?/i);
+if(!ps){ps=document.createElement('section');ps.innerHTML='<h2>Projects</h2><div id="proj"></div><button class="add ui" data-t="proj">+ Add subsection</button>';prep(ps);R.querySelector('main').appendChild(ps)}
+let pl=ps.querySelector('#proj');if(!pl){pl=document.createElement('div');pl.id='proj';ps.insertBefore(pl,ps.querySelector('.add'))}
+pl.innerHTML=pf.proj.map(r=>pfItemHTML(r[0],r[1],'',r[2])).join('');pl.querySelectorAll('.item').forEach(fit)}
+pmsgR2('Resume filled in.')};
 </script>
 </body></html>
