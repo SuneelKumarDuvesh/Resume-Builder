@@ -4,6 +4,7 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Lora:wght@400;600;700&family=Source+Sans+3:wght@400;600;700&family=Space+Grotesk:wght@400;600;700&display=swap">
 <script defer src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 <script defer src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style id="appcss">
 :root{--bg:#0a0e1a;--panel:#111527;--ink:#e8ecff;--mute:#8891b8;--line:#2a3155;--glow:#7c6cf6;--glow2:#3ec9ff;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
 html{scroll-padding-top:env(safe-area-inset-top,0px)}
@@ -90,13 +91,19 @@ button:focus-visible,select:focus-visible{outline:2px solid var(--glow2);outline
 .nbt{position:absolute;top:-26px;left:0;display:none;gap:3px}.nb:hover .nbt,.nb:focus-within .nbt{display:flex}
 .nbt button{font:12px Inter,sans-serif;border:0;background:#333;color:#fff;border-radius:4px;padding:3px 7px;cursor:pointer}
 .act button:disabled{opacity:.5;cursor:not-allowed}
-#fx{position:fixed;z-index:50;width:18px;height:18px;border-radius:50%;border:0;background:#e5484d;color:#fff;font:13px/18px sans-serif;padding:0;cursor:pointer}#fx[hidden]{display:none}
+#fx{position:fixed;z-index:50;display:flex;gap:2px;background:#1a1f3d;border:1px solid var(--line,#333);border-radius:7px;padding:2px;box-shadow:0 6px 18px rgba(0,0,0,.4)}
+#fx button{width:20px;height:20px;border-radius:4px;border:0;background:#333;color:#fff;font:11px/18px sans-serif;padding:0;cursor:pointer}
+#fx button[data-f="del"]{background:#e5484d}
+#fx button:hover{filter:brightness(1.2)}
+#fx[hidden]{display:none}
 #resume .lnk{color:var(--accent);text-decoration:underline}
 #resume .af{font:11px Inter,sans-serif;border:1px dashed #aaa;background:#fff;color:#555;border-radius:4px;padding:2px}#resume .tools .af{background:#444;color:#fff;border:0}#resume .tools select option{color:#000;background:#fff}
 
 #emenu{position:fixed;z-index:70;background:#1a1f3d;border:1px solid var(--line);border-radius:10px;padding:6px;display:none;flex-direction:column;gap:2px;box-shadow:0 12px 30px rgba(0,0,0,.5)}
 #emenu button{font:13px Inter,sans-serif;border:0;background:none;color:var(--ink);text-align:left;padding:7px 10px;border-radius:6px;cursor:pointer;white-space:nowrap}
 #emenu button:hover{background:rgba(124,108,246,.25)}
+#resume .colAdd{display:block;width:100%;margin-top:10px;font:12px Inter,sans-serif;padding:8px;border:1px dashed #aaa;background:none;color:#777;border-radius:6px;cursor:pointer}
+#resume .colAdd:hover{border-color:#2a6df4;color:#2a6df4}
 #cmodal{position:fixed;inset:0;z-index:90;display:flex;align-items:center;justify-content:center;padding:20px}
 #cmodal[hidden]{display:none}
 .cbox{max-width:380px;background:linear-gradient(180deg,rgba(124,108,246,.1),rgba(17,21,39,.96)),var(--panel);border:1px solid var(--line);border-radius:14px;padding:20px;box-shadow:0 20px 60px rgba(0,0,0,.6)}
@@ -104,13 +111,13 @@ button:focus-visible,select:focus-visible{outline:2px solid var(--glow2);outline
 .cbox .crow{display:flex;gap:8px;justify-content:flex-end}
 .cbox button{font:inherit;padding:8px 14px;border:1px solid var(--line);background:rgba(255,255,255,.03);color:var(--ink);border-radius:8px;cursor:pointer}
 .cbox #cyes{background:linear-gradient(90deg,var(--glow),var(--glow2));color:#0a0e1a;border-color:transparent;font-weight:700}
-@media print{#fx{display:none}#emenu{display:none!important}.tabs{display:none}body{background:#fff}.app{display:block;padding:0}.panel{display:none}.stage{overflow:visible}#resume{box-shadow:none;margin:0}@page{margin:0}}
+@media print{#fx{display:none}body{background:#fff}.topbar{display:none!important}#startScreen{display:none!important}.app{display:block;padding:0}.panel{display:none}.stage{overflow:visible}#resume{box-shadow:none;margin:0}@page{margin:0}}
 </style>
 <style id="rcss">
 #resume{--accent:#1f4e79;--font:Inter,system-ui,sans-serif;--fs:14px;font:var(--fs)/1.5 var(--font);display:grid;box-sizing:border-box;padding:var(--pp,44px);gap:0 32px;position:relative}
 #resume [contenteditable]{outline:none;border-radius:3px}
 #resume [contenteditable]{outline:1px dashed rgba(120,120,120,.35)}#resume h1[contenteditable],#resume h2[contenteditable]{outline:1px dashed rgba(120,120,120,.25)}#resume [contenteditable]:hover{background:rgba(120,120,120,.12)}#resume [contenteditable]:focus{background:rgba(42,109,244,.12);outline-color:#2a6df4}
-@media print{#resume [contenteditable]{outline:none!important}}
+@media print{#resume [contenteditable],#resume .item.selected,#resume section.selected{outline:none!important}}
 #resume h1{font-size:var(--h1s,34px);line-height:1.1;margin:0;color:var(--htxt,var(--accent))}
 #resume .role{font-size:var(--rs,16px);margin:4px 0 2px;color:var(--htxt,inherit)}#resume .contact{margin:0;color:var(--htxt,#555);font-size:.9em}
 #resume h2{font-size:var(--h2s,13px);letter-spacing:.06em;text-transform:uppercase;color:var(--accent);margin:var(--sg,22px) 0 8px;border-bottom:1.5px solid var(--accent);padding-bottom:3px}
@@ -118,21 +125,37 @@ button:focus-visible,select:focus-visible{outline:2px solid var(--glow2);outline
 #resume .row{display:flex;justify-content:space-between;gap:12px;font-weight:600}#resume .row span:last-child{font-weight:400;color:#555;white-space:nowrap}
 #resume .sub{color:var(--accent);margin:0 0 3px}
 #resume .ui{font:12px Inter,sans-serif}
-#resume .x{position:absolute;right:-26px;top:0;border:0;background:#e5484d;color:#fff;border-radius:50%;width:18px;height:18px;line-height:16px;padding:0;cursor:pointer;opacity:0}
-#resume .item:hover .x{opacity:1}
-#resume .add{border:1px dashed #aaa;background:none;border-radius:6px;padding:4px 10px;cursor:pointer;color:#555}
+#resume .x{position:absolute;right:-26px;top:0;border:0;background:#e5484d;color:#fff;border-radius:50%;width:18px;height:18px;line-height:16px;padding:0;cursor:pointer;opacity:0;pointer-events:none}
+#resume .item.selected>.x{opacity:1;pointer-events:auto}
+#resume .imv{position:absolute;right:-26px;border:0;background:#444;color:#fff;border-radius:50%;width:18px;height:18px;line-height:16px;padding:0;font:10px sans-serif;cursor:pointer;opacity:0;pointer-events:none}
+#resume .item.selected>.imv{opacity:1;pointer-events:auto}
+#resume .imv[data-d="-1"]{top:22px}#resume .imv[data-d="1"]{top:44px}
+#resume .item.selected{outline:1.5px dashed #e5484d;outline-offset:3px;border-radius:3px}
+#resume section.selected{outline:1.5px dashed #2a6df4;outline-offset:4px;border-radius:4px}
+#resume .add,#resume .hladd{border:1px dashed #aaa;background:none;border-radius:6px;padding:4px 10px;cursor:pointer;color:#555}
 @media print{#resume .ui{display:none}}
 #resume{grid-template-areas:"head" "main" "side";grid-template-columns:1fr;grid-template-rows:auto auto 1fr}
 #resume header{grid-area:head;background:var(--hbg,transparent);padding:var(--hp,16px) 20px;margin-bottom:var(--hg,0px);min-height:var(--hh,0px);box-sizing:border-box;display:flex;flex-direction:column;justify-content:center;overflow:hidden}
 #resume main,#resume aside{min-height:40px}
 
-#resume section{position:relative}#resume .tools{position:absolute;right:0;top:0;display:flex;flex-wrap:wrap;justify-content:flex-end;max-width:100%;gap:4px;opacity:0;z-index:3}#resume section.hshow>.tools{opacity:1}#resume .tools>*{border:0;background:#444;color:#fff;border-radius:4px;padding:2px 7px;cursor:pointer}#resume .tools .rs{background:#e5484d}#resume .tools .dh{cursor:grab}
+#resume section{position:relative}#resume .tools{position:absolute;right:0;top:0;display:flex;flex-wrap:wrap;justify-content:flex-end;max-width:100%;gap:4px;opacity:0;pointer-events:none;z-index:3}#resume section.selected>.tools{opacity:1;pointer-events:auto}#resume .tools>*{border:0;background:#444;color:#fff;border-radius:4px;padding:2px 7px;cursor:pointer}#resume .tools .rs{background:#e5484d}#resume .tools .dh{cursor:grab}
 #resume .blk{position:relative}#resume .blk:hover>.x{opacity:1}
 #resume ul.bl{margin:0 0 var(--pg,6px);padding-left:1.3em;list-style-type:var(--ls,disc)}#resume ul.bl li::marker{color:var(--accent)}
 #resume .tb{white-space:pre-wrap;margin:0 0 var(--pg,6px)}
+#resume .frow{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;gap:8px 14px;margin:0 0 var(--pg,6px)}
+#resume .frow>[contenteditable]{flex:0 1 auto}
+#resume .frowadd{flex:none;width:16px;height:16px;line-height:14px;text-align:center;border:1px dashed #aaa;border-radius:50%;color:#888;font-size:12px;cursor:pointer;user-select:none}
+#resume .frowadd:hover{border-color:#2a6df4;color:#2a6df4}
+@media print{#resume .frowadd{display:none}}
+#resume .lf[data-mode="inline"]{display:flex;flex-wrap:wrap;gap:5px;align-items:baseline;margin:0 0 var(--pg,6px)}
+#resume .lf[data-mode="inline"] .lfl{font-weight:700;white-space:nowrap}
+#resume .lf[data-mode="block"] .lfl{display:block;font-weight:700;margin-bottom:2px}
+#resume .lf[data-mode="block"] .lfc{display:block}
+#resume .lfm{display:block;margin:2px 0 var(--pg,6px);font:10px Inter,sans-serif;border:1px dashed #aaa;background:none;color:#777;border-radius:4px;padding:1px 6px;cursor:pointer}
+#resume .lfm:hover{border-color:#2a6df4;color:#2a6df4}
 #resume .itools{display:none;gap:4px;margin-top:2px}#resume .item.hshow>.itools{display:flex}
 #resume .itools button{font:11px Inter,sans-serif;border:1px dashed #aaa;background:none;border-radius:4px;padding:2px 6px;cursor:pointer;color:#555}
-@media (hover:none){#resume .tools,#resume .x,#resume .itools{opacity:1;display:flex}}#resume main{grid-area:main}#resume aside{grid-area:side}
+@media (hover:none){#resume .itools{display:flex}}#resume main{grid-area:main}#resume aside{grid-area:side}
 /* classic */
 #resume.t-classic header{text-align:center;border-bottom:3px double var(--accent);padding-bottom:12px}
 #resume.t-classic h2{border:0;text-align:center}
@@ -156,7 +179,7 @@ button:focus-visible,select:focus-visible{outline:2px solid var(--glow2);outline
 <span class="brandwrap"><svg class="logo" viewBox="0 0 32 32" aria-hidden="true"><rect x="2" y="2" width="28" height="28" rx="8" fill="url(#lg)"/><circle cx="16" cy="12" r="2.4" fill="#0a0e1a"/><rect x="11" y="16.4" width="10" height="1.6" rx="0.8" fill="#0a0e1a"/><rect x="11" y="19.4" width="10" height="1.6" rx="0.8" fill="#0a0e1a"/><rect x="11" y="22.4" width="6.5" height="1.6" rx="0.8" fill="#0a0e1a"/><defs><linearGradient id="lg" x1="0" y1="0" x2="32" y2="32"><stop offset="0" stop-color="#3ec9ff"/><stop offset="1" stop-color="#7c6cf6"/></linearGradient></defs></svg><span class="brand">ResumeForge</span></span>
 <nav class="menu"><button id="dopen">Editor &amp; Settings</button></nav>
 <span class="mspacer"></span>
-<div class="menu filegrp"><button id="rsave">Save</button><button id="rreset">Start Over</button><button class="primary" id="rdl2">Download</button></div>
+<div class="menu filegrp"><button id="rsave">Save</button><button id="rreset">Start Over</button><button class="primary" id="rdl2">Download PDF</button></div>
 </div>
 <div class="pmask" id="pmask"></div>
 <div id="cmodal" hidden><div class="cbox"><p id="cmsg"></p><div class="crow"><button id="cno">Cancel</button><button id="cyes">Yes, continue</button></div></div></div>
@@ -234,23 +257,35 @@ button:focus-visible,select:focus-visible{outline:2px solid var(--glow2);outline
 </div>
 <h3 style="margin-top:22px">Export</h3>
 <div class="act">
-<button class="primary" id="dl">Download resume (HTML)</button>
-<button id="pr">Print / Save as PDF</button>
+<button class="primary" id="pr">Download as PDF</button>
+<p style="margin-top:6px">Opens your browser's print dialog — choose "Save as PDF." Only the resume itself is included, nothing else on this page.</p>
 <span id="msg" style="font-size:12px;color:var(--mute)" role="status"></span>
 </div>
 </section>
 <div class="stage"><div id="resume" class="t-classic">
-<header><h1 contenteditable>Your Name</h1><p class="role" contenteditable>Job Title</p><p class="contact" contenteditable>you@email.com &nbsp;|&nbsp; +91 00000 00000 &nbsp;|&nbsp; City, Country</p><button class="add ui" id="hln" style="margin-top:4px">+ Add line</button></header>
+<header><h1 contenteditable>Suneel Kumar</h1><p class="role" contenteditable>Software &amp; Game Developer</p><p class="contact" contenteditable>suneel321202@gmail.com &nbsp;|&nbsp; +91 9057199367</p><p contenteditable>LinkedIn: suneel-kumar-197180191</p><p contenteditable>GitHub: SuneelKumarDuvesh</p><button class="hladd ui" id="hln" style="margin-top:4px">+ Add line</button></header>
 <main>
-<section><h2>Summary</h2><p contenteditable>Write two or three sentences about your experience, strengths and what you want to do next.</p></section>
-<section><h2>Experience</h2><div id="exp">
-<div class="item"><div class="row"><span contenteditable>Job Title</span><span contenteditable>2022 – Present</span></div><p class="sub" contenteditable>Company Name</p><p contenteditable>Describe what you did and the result. Use numbers where you can.</p><button class="x ui" title="Remove">×</button></div>
-<div class="item"><div class="row"><span contenteditable>Previous Job Title</span><span contenteditable>2019 – 2022</span></div><p class="sub" contenteditable>Previous Company</p><p contenteditable>Describe a key achievement in this role.</p><button class="x ui" title="Remove">×</button></div>
-</div><button class="add ui" data-t="exp">+ Add job</button></section>
+<section><h2>Introduction</h2><p contenteditable>Software and Game Developer with experience in C#, Unity3D, Blender and front-end web development.</p></section>
+<section><h2>Projects</h2><div id="exp">
+<div class="item"><div class="row"><span contenteditable>Modular Firebase Authentication System</span><span contenteditable></span></div><div class="blk"><div class="lf" data-mode="inline"><span class="lfl" contenteditable>Tools:</span><span class="lfc" contenteditable>Firebase, Unity, C#, Google Sign-In for Unity package, Firebase SDK</span></div><button class="lfm ui" title="Switch between same line and its own line">⇄ Line</button><button class="x ui" title="Remove">×</button></div><p contenteditable>A robust, reusable and extensible authentication system for Unity projects that integrates with Firebase, providing a simple, event-driven way to handle multiple sign-in providers.</p><div class="itools ui"><select class="af" aria-label="Add field"><option value="">+ Add field...</option><option value="date">Date</option><option value="sub">Subtitle</option><option value="line">Text line</option><option value="text">Text area</option><option value="bul">Bullet list</option><option value="link">Link</option><option value="row">Row (left/right, wraps)</option><option value="label">Label + text (toggle line)</option></select></div><button class="x ui" title="Remove">×</button></div>
+<div class="item"><div class="row"><span contenteditable>Unity Ad Monetization System</span><span contenteditable></span></div><div class="blk"><div class="lf" data-mode="inline"><span class="lfl" contenteditable>Tools:</span><span class="lfc" contenteditable>Unity, C#</span></div><button class="lfm ui" title="Switch between same line and its own line">⇄ Line</button><button class="x ui" title="Remove">×</button></div><p contenteditable>A centralized, modular and scalable ad management system for Unity, with a clean API to implement rewarded, interstitial and banner ads using the Unity Ads SDK — robust for production and flexible for rapid development.</p><div class="itools ui"><select class="af" aria-label="Add field"><option value="">+ Add field...</option><option value="date">Date</option><option value="sub">Subtitle</option><option value="line">Text line</option><option value="text">Text area</option><option value="bul">Bullet list</option><option value="link">Link</option><option value="row">Row (left/right, wraps)</option><option value="label">Label + text (toggle line)</option></select></div><button class="x ui" title="Remove">×</button></div>
+<div class="item"><div class="row"><span contenteditable>Driver Behaviour Detection (Machine Learning)</span><span contenteditable></span></div><div class="blk"><div class="lf" data-mode="inline"><span class="lfl" contenteditable>Tools:</span><span class="lfc" contenteditable>Python, TensorFlow, Scikit-learn</span></div><button class="lfm ui" title="Switch between same line and its own line">⇄ Line</button><button class="x ui" title="Remove">×</button></div><p contenteditable>Developed a system to detect unsafe driving behaviors using machine learning techniques.</p><div class="itools ui"><select class="af" aria-label="Add field"><option value="">+ Add field...</option><option value="date">Date</option><option value="sub">Subtitle</option><option value="line">Text line</option><option value="text">Text area</option><option value="bul">Bullet list</option><option value="link">Link</option><option value="row">Row (left/right, wraps)</option><option value="label">Label + text (toggle line)</option></select></div><button class="x ui" title="Remove">×</button></div>
+<div class="item"><div class="row"><span contenteditable>3D Car Racing Game</span><span contenteditable></span></div><div class="blk"><div class="lf" data-mode="inline"><span class="lfl" contenteditable>Tools:</span><span class="lfc" contenteditable>Unity 3D, Blender, C#</span></div><button class="lfm ui" title="Switch between same line and its own line">⇄ Line</button><button class="x ui" title="Remove">×</button></div><p contenteditable>Built a physics-based car racing game with smooth gameplay.</p><div class="itools ui"><select class="af" aria-label="Add field"><option value="">+ Add field...</option><option value="date">Date</option><option value="sub">Subtitle</option><option value="line">Text line</option><option value="text">Text area</option><option value="bul">Bullet list</option><option value="link">Link</option><option value="row">Row (left/right, wraps)</option><option value="label">Label + text (toggle line)</option></select></div><button class="x ui" title="Remove">×</button></div>
+</div><button class="add ui" data-t="exp">+ Add project</button></section>
 </main>
 <aside>
-<section><h2>Education</h2><div id="edu"><div class="item"><div class="row"><span contenteditable>Degree</span></div><p class="sub" contenteditable>University</p><p contenteditable>2015 – 2019</p><button class="x ui" title="Remove">×</button></div></div><button class="add ui" data-t="edu">+ Add education</button></section>
-<section><h2>Skills</h2><div id="sk"><p contenteditable>Skill one</p><p contenteditable>Skill two</p><p contenteditable>Skill three</p></div><button class="add ui" data-t="sk">+ Add skill</button></section>
+<section><h2>Education</h2><div id="edu">
+<div class="item"><div class="row"><span contenteditable>B.Tech, Computer Science</span><span contenteditable>2019 – 2023</span></div><p class="sub" contenteditable>Indian Institute of Information Technology (IIIT Kota)</p><p contenteditable>CGPA: 6.76</p><button class="x ui" title="Remove">×</button></div>
+<div class="item"><div class="row"><span contenteditable>Senior Secondary School (12th)</span><span contenteditable>2017</span></div><p class="sub" contenteditable>Jaya Public School, Bharatpur</p><p contenteditable>78.8%</p><button class="x ui" title="Remove">×</button></div>
+<div class="item"><div class="row"><span contenteditable>Secondary School (10th)</span><span contenteditable>2015</span></div><p class="sub" contenteditable>Jaya Public School, Bharatpur</p><p contenteditable>85.5%</p><button class="x ui" title="Remove">×</button></div>
+</div><button class="add ui" data-t="edu">+ Add education</button></section>
+<section><h2>Technical Skills</h2><div id="sk">
+<div class="blk"><div class="lf" data-mode="block"><span class="lfl" contenteditable>Languages</span><span class="lfc" contenteditable>Python, C#, HTML, CSS, JavaScript, MySQL, jQuery</span></div><button class="lfm ui" title="Switch between same line and its own line">⇄ Line</button><button class="x ui" title="Remove">×</button></div>
+<div class="blk"><div class="lf" data-mode="block"><span class="lfl" contenteditable>Tools</span><span class="lfc" contenteditable>Unity 3D, Blender, Git, Figma, Inkscape, Canva, Generative AI</span></div><button class="lfm ui" title="Switch between same line and its own line">⇄ Line</button><button class="x ui" title="Remove">×</button></div>
+<div class="blk"><div class="lf" data-mode="block"><span class="lfl" contenteditable>Concepts</span><span class="lfc" contenteditable>Web Development, Game Development, UI/UX Design</span></div><button class="lfm ui" title="Switch between same line and its own line">⇄ Line</button><button class="x ui" title="Remove">×</button></div>
+</div><button class="add ui" data-t="sk">+ Add skill group</button></section>
+<section><h2>Languages</h2><div id="lang"><p contenteditable>Hindi</p><p contenteditable>English</p></div><button class="add ui" data-t="lang">+ Add language</button></section>
+<section><h2>Interests</h2><div id="int"><p contenteditable>Music</p><p contenteditable>Drawing</p></div><button class="add ui" data-t="int">+ Add interest</button></section>
 </aside>
 </div></div></div>
 <div class="app" id="pdfapp" hidden style="display:none!important">
@@ -274,7 +309,7 @@ const sw=$('#sw');colors.forEach(c=>{const b=document.createElement('button');b.
 const ci=document.createElement('input');ci.type='color';ci.title='Custom color';ci.oninput=()=>{accent=ci.value;apply()};sw.appendChild(ci);
 document.querySelectorAll('#tpl button').forEach(b=>b.onclick=()=>{tpl=b.dataset.v;apply();spDefaults()});
 $('#font').onchange=apply;$('#fs').oninput=apply;
-const OP='<option value="line">Text line</option><option value="text">Text area</option><option value="bul">Bullet list</option><option value="link">Link</option></select>',AFI='<select class="af" aria-label="Add field"><option value="">+ Add field...</option><option value="date">Date</option><option value="sub">Subtitle</option>'+OP,AFS='<select class="af" aria-label="Add field"><option value="">+ Add field...</option>'+OP;
+const OP='<option value="line">Text line</option><option value="text">Text area</option><option value="bul">Bullet list</option><option value="link">Link</option><option value="row">Row (left/right, wraps)</option><option value="label">Label + text (toggle line)</option></select>',AFI='<select class="af" aria-label="Add field"><option value="">+ Add field...</option><option value="date">Date</option><option value="sub">Subtitle</option>'+OP,AFS='<select class="af" aria-label="Add field"><option value="">+ Add field...</option>'+OP;
 function pApply(){}
 const TD={'t-classic':{pp:44,hp:16,hg:0,sg:22,ig:12,h1s:34,rs:16,h2s:13,hh:0,ip:0,pg:6},'t-sidebar':{pp:44,hp:28,hg:0,sg:22,ig:12,h1s:34,rs:16,h2s:13,hh:0,ip:0,pg:6},'t-bold':{pp:44,hp:30,hg:0,sg:22,ig:12,h1s:34,rs:16,h2s:13,hh:0,ip:0,pg:6},'t-minimal':{pp:44,hp:16,hg:0,sg:22,ig:12,h1s:40,rs:16,h2s:13,hh:0,ip:0,pg:6}};
 function spApply(){document.querySelectorAll('[data-sp]').forEach(i=>R.style.setProperty('--'+i.dataset.sp,i.value+'px'))}
@@ -286,37 +321,46 @@ R.addEventListener('dragend',()=>{if(dragSec)dragSec.style.opacity='';dragSec=nu
 R.addEventListener('dragover',e=>{if(!dragSec)return;const box=e.target.closest('main,aside');if(!box)return;e.preventDefault();const after=[...box.querySelectorAll(':scope>section')].filter(x=>x!==dragSec).find(x=>{const q=x.getBoundingClientRect();return e.clientY<q.top+q.height/2});after?box.insertBefore(dragSec,after):box.appendChild(dragSec)});
 R.addEventListener('drop',e=>{if(dragSec)e.preventDefault()});
 const ITEM='<div class="item"><div class="row"><span contenteditable>Subsection title</span><span contenteditable>Date</span></div><p class="sub" contenteditable>Subtitle</p><p contenteditable>Details go here.</p><div class="itools ui">'+AFI+'</div><button class="x ui" title="Remove">×</button></div>';
-const BT='<div class="blk"><div class="tb" contenteditable>Type anything here...</div><button class="x ui" title="Remove">×</button></div>',BL='<div class="blk"><ul class="bl" contenteditable><li>Point one</li><li>Point two</li></ul><button class="x ui" title="Remove">×</button></div>';
-function fit(it){if(!it.querySelector('.itools')){const d=document.createElement('div');d.className='itools ui';d.innerHTML=AFI;it.appendChild(d)}}
-document.addEventListener('change',e=>{const sel=e.target.closest&&e.target.closest('select.af');if(!sel||!sel.value)return;const v=sel.value;sel.value='';const it=sel.closest('.item'),host=it||sel.closest('section'),bef=it?it.querySelector('.itools'):(host.querySelector('.add')||host.querySelector('.tools')),mk={line:'<p contenteditable>Text line</p>',link:'<p class="lnk" contenteditable>www.example.com</p>',text:BT,bul:BL};let el;
+const BT='<div class="blk"><div class="tb" contenteditable>Type anything here...</div><button class="x ui" title="Remove">×</button></div>',BL='<div class="blk"><ul class="bl" contenteditable><li>Point one</li><li>Point two</li></ul><button class="x ui" title="Remove">×</button></div>',RW='<div class="blk"><div class="frow"><span contenteditable>Left</span><span contenteditable>Right</span><span class="frowadd ui" title="Add item to this row">+</span></div><button class="x ui" title="Remove">×</button></div>';
+function lfHTML(label,content){return '<div class="blk"><div class="lf" data-mode="inline"><span class="lfl" contenteditable>'+label+'</span><span class="lfc" contenteditable>'+content+'</span></div><button class="lfm ui" title="Switch between same line and its own line">⇄ Line</button><button class="x ui" title="Remove">×</button></div>'}
+function fit(it){if(!it.querySelector('.itools')){const d=document.createElement('div');d.className='itools ui';d.innerHTML=AFI;it.appendChild(d)}
+if(!it.querySelector(':scope>.imv')){const up=document.createElement('button');up.className='imv ui';up.dataset.d='-1';up.title='Move this subsection up';up.textContent='▲';
+const dn=document.createElement('button');dn.className='imv ui';dn.dataset.d='1';dn.title='Move this subsection down';dn.textContent='▼';it.appendChild(up);it.appendChild(dn)}}
+document.addEventListener('change',e=>{const sel=e.target.closest&&e.target.closest('select.af');if(!sel||!sel.value)return;const v=sel.value;sel.value='';const it=sel.closest('.item'),host=it||sel.closest('section'),bef=it?it.querySelector('.itools'):(host.querySelector('.add')||host.querySelector('.tools')),mk={line:'<p contenteditable>Text line</p>',link:'<p class="lnk" contenteditable>www.example.com</p>',text:BT,bul:BL,row:RW,label:lfHTML('Label','Content')};let el;
 if(v==='date'){let row=it.querySelector('.row');if(!row){row=document.createElement('div');row.className='row';it.prepend(row)}row.insertAdjacentHTML('beforeend','<span contenteditable>Date</span>');el=row.lastElementChild}
 else if(v==='sub'){const row=it.querySelector('.row'),h='<p class="sub" contenteditable>Subtitle</p>';if(row){row.insertAdjacentHTML('afterend',h);el=row.nextElementSibling}else{it.insertAdjacentHTML('afterbegin',h);el=it.firstElementChild}}
 else{bef.insertAdjacentHTML('beforebegin',mk[v]);el=bef.previousElementSibling}
 const f=el.matches('[contenteditable]')?el:el.querySelector('[contenteditable]');if(f)f.focus()});
 let lastOwner=null;function ownerOf(t){if(!t||!t.closest)return null;return t.closest('.item')||t.closest('section')}
+/* Click-to-select: whole-item/section deletion only shows once you click that item/section directly */
+let selOwner=null;
+function selectOwner(o){if(selOwner&&selOwner!==o)selOwner.classList.remove('selected');if(o&&o!==selOwner)o.classList.add('selected');selOwner=o}
+R.addEventListener('click',e=>{if(e.target.closest('.colAdd,.add,.x,.rs,.mv,.dh,.imv'))return;
+const fa=e.target.closest('.frowadd');if(fa){fa.insertAdjacentHTML('beforebegin','<span contenteditable>Item</span>');return}
+const lm=e.target.closest('.lfm');if(lm){const lf=lm.parentElement.querySelector('.lf');lf.dataset.mode=lf.dataset.mode==='inline'?'block':'inline';return}
+selectOwner(ownerOf(e.target))});
+document.addEventListener('click',e=>{if(!R.contains(e.target)&&selOwner){selOwner.classList.remove('selected');selOwner=null}});
 function setOwner(o){if(o===lastOwner)return;if(lastOwner)lastOwner.classList.remove('hshow');if(o)o.classList.add('hshow');lastOwner=o}
 R.addEventListener('mouseover',e=>setOwner(ownerOf(e.target)));
 R.addEventListener('mouseleave',()=>setOwner(null));
 R.addEventListener('focusin',e=>setOwner(ownerOf(e.target)));
-const fx=document.createElement('button');fx.id='fx';fx.textContent='×';fx.title='Delete this field';fx.hidden=true;document.body.appendChild(fx);let fcur=null,ft=null;
-/* Click on empty resume space -> quick "add section" menu */
-const emenu=document.createElement('div');emenu.id='emenu';emenu.innerHTML='<button data-e="main">+ Add section (main)</button><button data-e="side">+ Add section (side)</button>';document.body.appendChild(emenu);
-function hideEmenu(){emenu.style.display='none'}
-document.addEventListener('click',e=>{
-if(e.target.closest('#emenu'))return;
-const isEmpty=e.target===R||e.target.tagName==='MAIN'||e.target.tagName==='ASIDE'||e.target.tagName==='HEADER';
-if(isEmpty){emenu.style.left=e.clientX+'px';emenu.style.top=e.clientY+'px';emenu.style.display='flex'}
-else hideEmenu()});
-window.addEventListener('scroll',hideEmenu,true);
-emenu.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;const v=b.dataset.e;const s=document.createElement('section');s.innerHTML='<h2>New section</h2><div class="list">'+ITEM+'</div><button class="add ui">+ Add subsection</button>';prep(s);R.querySelector(v==='side'?'aside':'main').appendChild(s);hideEmenu()});
-function ftarget(t){if(!t.closest)return null;const el=t.closest('[contenteditable]');if(!el||!R.contains(el)||el.closest('.tools')||el.matches('h1,h2'))return null;return el.closest('.blk')||el}
+const fx=document.createElement('div');fx.id='fx';fx.hidden=true;fx.innerHTML='<button data-f="up" title="Move up">▲</button><button data-f="down" title="Move down">▼</button><button data-f="del" title="Delete this field">×</button>';document.body.appendChild(fx);let fcur=null,ft=null;
+/* Explicit "+ Add section" button pinned at the end of each column (no accidental triggers) */
+function addSectionBtn(col){const b=document.createElement('button');b.className='colAdd ui';b.textContent='+ Add section';b.onclick=()=>{const s=document.createElement('section');s.innerHTML='<h2>New section</h2><div class="list">'+ITEM+'</div><button class="add ui">+ Add subsection</button>';prep(s);col.insertBefore(s,b)};col.appendChild(b)}
+addSectionBtn(R.querySelector('main'));addSectionBtn(R.querySelector('aside'));
+function ftarget(t){if(!t.closest)return null;const el=t.closest('[contenteditable]');if(!el||!R.contains(el)||el.closest('.tools')||el.matches('h1,h2'))return null;return el.closest('.blk')||el.closest('.row')||el}
 function showFx(el){fcur=el;const q=el.getBoundingClientRect();fx.style.left=(q.right-9)+'px';fx.style.top=(q.top-9)+'px';fx.hidden=false;clearTimeout(ft)}
+function fieldSibs(el){return el.parentElement?[...el.parentElement.children].filter(c=>!c.classList.contains('ui')):[]}
+function fieldMove(el,dir){const sibs=fieldSibs(el),i=sibs.indexOf(el);if(i<0)return;if(dir==='up'&&i>0)el.parentElement.insertBefore(el,sibs[i-1]);if(dir==='down'&&i<sibs.length-1)el.parentElement.insertBefore(sibs[i+1],el);const q=el.getBoundingClientRect();fx.style.left=(q.right-9)+'px';fx.style.top=(q.top-9)+'px'}
 R.addEventListener('mouseover',e=>{const t=ftarget(e.target);if(t)showFx(t)});
 R.addEventListener('focusin',e=>{const t=ftarget(e.target);if(t)showFx(t)});
 R.addEventListener('mouseout',()=>{ft=setTimeout(()=>fx.hidden=true,400)});
 fx.onmouseenter=()=>clearTimeout(ft);fx.onmouseleave=()=>{ft=setTimeout(()=>fx.hidden=true,300)};
 window.addEventListener('scroll',()=>fx.hidden=true,true);
-fx.onclick=()=>{if(!fcur)return;const row=fcur.parentElement;fcur.remove();if(row&&row.classList.contains('row')&&!row.children.length)row.remove();fx.hidden=true;fcur=null};
+fx.addEventListener('click',e=>{if(!fcur)return;const b=e.target.closest('button');if(!b)return;const f=b.dataset.f;
+if(f==='up'){fieldMove(fcur,'up');return}
+if(f==='down'){fieldMove(fcur,'down');return}
+const row=fcur.parentElement;fcur.remove();if(row&&row.classList.contains('row')&&!row.children.length)row.remove();fx.hidden=true;fcur=null});
 $('#hln').onclick=()=>{const c=R.querySelector('header .contact');c.insertAdjacentHTML('afterend','<p contenteditable>New line</p>');c.nextElementSibling.focus()};
 $('#bls').onchange=e=>R.style.setProperty('--ls',e.target.value);
 function prep(s){s.querySelector('h2').contentEditable=true;if(!s.querySelector('.tools')){const t=document.createElement('div');t.className='tools ui';t.innerHTML='<span class="dh" draggable="true" title="Drag to move section">⠿ Move</span><button class="mv" data-d="-1" title="Move up">▲</button><button class="mv" data-d="1" title="Move down">▼</button>'+AFS+'<button class="rs">Remove</button>';s.appendChild(t)}}
@@ -329,25 +373,60 @@ document.addEventListener('click',e=>{
 const bt=e.target.closest('.bul,.ta,.at,.al');if(bt){const it=bt.closest('.item'),host=it||bt.closest('section'),bef=it?it.querySelector('.itools'):(host.querySelector('.add')||host.querySelector('.tools'));bef.insertAdjacentHTML('beforebegin',bt.matches('.bul,.al')?BL:BT);const f=bef.previousElementSibling.querySelector('[contenteditable]');if(f)f.focus();return}
 const rs=e.target.closest('.rs');if(rs){rs.closest('section').remove();return}
 const mv=e.target.closest('.mv');if(mv){const sc=mv.closest('section'),d=+mv.dataset.d,t=d<0?sc.previousElementSibling:sc.nextElementSibling;if(t&&t.tagName==='SECTION')d<0?sc.parentElement.insertBefore(sc,t):sc.parentElement.insertBefore(t,sc);return}
+const imv=e.target.closest('.imv');if(imv){const it=imv.closest('.item'),d=+imv.dataset.d,sibs=[...it.parentElement.children].filter(c=>c.classList.contains('item')),idx=sibs.indexOf(it);
+if(d<0&&idx>0)it.parentElement.insertBefore(it,sibs[idx-1]);if(d>0&&idx<sibs.length-1)it.parentElement.insertBefore(sibs[idx+1],it);return}
 const x=e.target.closest('.x');if(x){x.parentElement.remove();return}
 const a=e.target.closest('.add');if(!a)return;const box=a.dataset.t?document.getElementById(a.dataset.t):a.previousElementSibling;
 if(!a.dataset.t){box.insertAdjacentHTML('beforeend',ITEM);return}
-if(box.id==='sk'){box.insertAdjacentHTML('beforeend','<p contenteditable>New skill</p>');return}
+if(box.id==='sk'){box.insertAdjacentHTML('beforeend',lfHTML('Category','Skills here'));return}
 const last=box.lastElementChild;if(last){const c=last.cloneNode(true);box.appendChild(c)}});
-$('#pr').onclick=()=>window.print();
-async function dl(){
-const c=R.cloneNode(true);c.querySelectorAll('.ui').forEach(n=>n.remove());c.querySelectorAll('[contenteditable]').forEach(n=>n.removeAttribute('contenteditable'));
-const html='<!doctype html><html><head><meta charset="utf-8"><title>Resume</title><link rel="stylesheet" href="'+document.querySelector('link[rel=stylesheet]').href+'"><style>'+$('#rcss').textContent+'body{margin:0;background:#eee}#resume{margin:0 auto}@media print{body{background:#fff}@page{margin:0}}</style></head><body>'+c.outerHTML+'</body></html>';
-const m=$('#msg');
-try{const d=window.claude&&await claude.use('downloads');
-if(d){await d.save({filename:'resume.html',data:html});m.textContent='Saved. Open it in a browser to print or save as PDF.'}
-else{const u=URL.createObjectURL(new Blob([html],{type:'text/html'})),l=document.createElement('a');l.href=u;l.download='resume.html';document.body.appendChild(l);l.click();l.remove();setTimeout(()=>URL.revokeObjectURL(u),1000);m.textContent='Downloaded. Open it in a browser to print or save as PDF.'}}
-catch(e){m.textContent='Download was cancelled or failed. Use Print / Save as PDF instead.'}}
+/* ATS-friendly PDF: real selectable text, single-column reading order, built directly (no print dialog) */
+function pdfBlockLines(el){
+if(el.classList.contains('blk'))el=[...el.children].find(c=>!c.classList.contains('ui'))||el;
+if(!el||!el.classList)return[];
+if(el.classList.contains('row')){const sp=[...el.children].filter(c=>c.matches&&c.matches('[contenteditable]')).map(s=>s.textContent.trim()).filter(Boolean);return sp.length?[{t:sp.join('      '),b:1}]:[]}
+if(el.classList.contains('lf')){const l=(el.querySelector('.lfl')||{}).textContent||'',c=(el.querySelector('.lfc')||{}).textContent||'';const t=(l.trim()?l.trim()+': ':'')+c.trim();return t.trim()?[{t}]:[]}
+if(el.classList.contains('frow')){const sp=[...el.querySelectorAll('[contenteditable]')].map(s=>s.textContent.trim()).filter(Boolean);return sp.length?[{t:sp.join('      ')}]:[]}
+if(el.classList.contains('bl')||el.tagName==='UL'){return [...el.querySelectorAll('li')].map(li=>li.textContent.trim()).filter(Boolean).map(t=>({t:'•  '+t,ind:1}))}
+if(el.classList.contains('tb')){return el.textContent.trim()?[{t:el.textContent.trim()}]:[]}
+if(el.classList.contains('sub')){return el.textContent.trim()?[{t:el.textContent.trim(),i:1}]:[]}
+if(el.matches&&el.matches('p,span')){return el.textContent.trim()?[{t:el.textContent.trim()}]:[]}
+return[]}
+async function dl(){try{
+if(!(window.jspdf&&window.jspdf.jsPDF)){pmsgR('PDF engine still loading — wait a second and try again.');return}
+pmsgR('Building PDF…');
+const {jsPDF}=window.jspdf,doc=new jsPDF({unit:'pt',format:'a4'}),M=48,PW=595.28,PH=841.89,W=PW-2*M;let y=M;
+function nl(h){y+=h;if(y>PH-M){doc.addPage();y=M}}
+function line(t,o={}){doc.setFont('helvetica',o.b?'bold':(o.i?'italic':'normal'));const sz=o.sz||10.5;doc.setFontSize(sz);const x=M+(o.ind?16:0);
+doc.splitTextToSize(t,W-(o.ind?16:0)).forEach(w=>{doc.text(w,x,y);nl(sz*1.3)})}
+const h=R.querySelector('header');
+if(h){const n=h.querySelector('h1'),ro=h.querySelector('.role'),c=h.querySelector('.contact');
+if(n&&n.textContent.trim())line(n.textContent.trim(),{b:1,sz:17});
+if(ro&&ro.textContent.trim())line(ro.textContent.trim(),{sz:11});
+if(c&&c.textContent.trim())line(c.textContent.replace(/\s*\|\s*/g,'   |   ').trim(),{sz:10});
+[...h.querySelectorAll('p')].forEach(p=>{if(p!==c&&p.textContent.trim())line(p.textContent.trim(),{sz:10})});
+nl(8)}
+[...R.querySelectorAll('main>section'),...R.querySelectorAll('aside>section')].forEach(sec=>{
+const h2=sec.querySelector(':scope>h2');if(h2&&h2.textContent.trim()){nl(5);line(h2.textContent.trim().toUpperCase(),{b:1,sz:11.5});nl(3)}
+[...sec.children].forEach(ch=>{
+if(ch.classList.contains('ui')||ch.tagName==='H2')return;
+if(ch.tagName==='DIV'&&!ch.classList.contains('row')&&!ch.classList.contains('blk')&&!ch.classList.contains('lf')&&!ch.classList.contains('frow')){
+[...ch.children].forEach(sub=>{if(sub.classList.contains('ui'))return;
+if(sub.classList.contains('item')){[...sub.children].forEach(f=>{if(f.classList.contains('ui'))return;pdfBlockLines(f).forEach(l=>line(l.t,l))});nl(5)}
+else pdfBlockLines(sub).forEach(l=>line(l.t,l))});
+}else pdfBlockLines(ch).forEach(l=>line(l.t,l))});
+nl(7)});
+await saveFile('resume.pdf',doc.output('blob'),'application/pdf');
+pmsgR('Downloaded — real selectable text, ATS-friendly.')
+}catch(err){pmsgR('Could not build the PDF: '+(err&&err.message?err.message:err))}}
+function pmsgR(t){const m=$('#msg');if(m)m.textContent=t}
+$('#pr').onclick=dl;
 document.querySelectorAll('.tabs button').forEach(b=>b.onclick=()=>{$('#rsapp').hidden=b.dataset.tab!=='rs';$('#pdfapp').hidden=b.dataset.tab!=='pdf';document.querySelectorAll('.tabs button').forEach(x=>x.setAttribute('aria-pressed',x===b))});
 let pdfBytes=null,pdfName='',spans=[],boxes=[],draw=false,ds=null;const pmsg=t=>$('#pmsg').textContent=t;
-async function saveFile(name,data,mime){const d=window.claude&&await claude.use('downloads');
-if(d){await d.save({filename:name,data});pmsg('Saved '+name)}
-else{const u=URL.createObjectURL(new Blob([data],{type:mime})),l=document.createElement('a');l.href=u;l.download=name;document.body.appendChild(l);l.click();l.remove();setTimeout(()=>URL.revokeObjectURL(u),1000);pmsg('Downloaded '+name)}}
+async function saveFile(name,data,mime){
+let d=null;try{d=window.claude&&await claude.use('downloads')}catch(e){d=null}
+if(d){await d.save({filename:name,data});return}
+const u=URL.createObjectURL(data instanceof Blob?data:new Blob([data],{type:mime})),l=document.createElement('a');l.href=u;l.download=name;document.body.appendChild(l);l.click();l.remove();setTimeout(()=>URL.revokeObjectURL(u),1000)}
 function setPc(){const g=$('#pages');g.style.setProperty('--cc',$('#pcc').value);g.style.setProperty('--tc',$('#ptc').value)}
 $('#pcc').oninput=$('#ptc').oninput=setPc;setPc();
 $('#pages').addEventListener('focusin',e=>{if(e.target.classList.contains('tx'))e.target.classList.add('on')});
@@ -392,7 +471,7 @@ pg.drawRectangle({x:l/sc,y:ph-(t+h)/sc,width:w/sc,height:h/sc,color:cc});
 bx.innerText.split('\n').forEach((ln,i)=>{const tx=ln.replace(/[^ -~\u00a0-\u00ff]/g,'?');if(tx.trim())pg.drawText(tx,{x:(l+2)/sc,y:ph-(t+2+fs*.9+i*fs*1.2)/sc,size:fs/sc,font,color:tc})})});
 await saveFile(pdfName.replace(/\.pdf$/i,'')+'-edited.pdf',await doc.save(),'application/pdf');
 }catch(err){pmsg(err&&err.code==='declined'?'Save cancelled.':'Could not build the PDF: '+(err.message||err))}};
-$('#dl').onclick=dl;apply();spDefaults();pApply();
+apply();spDefaults();pApply();
 function fitScale(){if(window.innerWidth>900){R.style.transform='';return}const avail=document.querySelector('.stage').clientWidth-8;R.style.transform='scale('+Math.min(1,avail/794)+')'}
 window.addEventListener('resize',fitScale);fitScale();
 const panel=document.querySelector('#rsapp .panel');
@@ -408,9 +487,11 @@ function restore(d){try{const t=document.createElement('div');t.innerHTML=d.html
 tpl=s.tpl;accent=s.accent;$('#font').value=s.font;$('#fs').value=s.fs;$('#bls').value=s.bls;
 Object.keys(s.sp||{}).forEach(k=>{const el=document.querySelector('[data-sp="'+k+'"]');if(el)el.value=s.sp[k]});
 apply();spApply();pApply();R.style.setProperty('--ls',s.bls);if(s.hbg)R.style.setProperty('--hbg',s.hbg);if(s.htx)R.style.setProperty('--htxt',s.htx);
-R.querySelectorAll('section').forEach(prep);R.querySelectorAll('.item').forEach(fit);fitScale();}catch(e){}}
-function save(){try{localStorage.setItem(LS_KEY,JSON.stringify(collect()));pmsgR('Saved on this device. It will stay until you tap Start over or clear browser data.')}catch(e){pmsgR('Could not save (private/incognito browsing blocks this).')}}
-function pmsgR(t){const m=document.createElement('span');/*inline toast*/const b=$('#rsave');b.title=t;b.textContent='Saved ✓';setTimeout(()=>b.textContent='Save',1500)}
+R.querySelectorAll('section').forEach(prep);R.querySelectorAll('.item').forEach(fit);
+['main','aside'].forEach(tag=>{const col=R.querySelector(tag);if(col&&!col.querySelector(':scope>.colAdd'))addSectionBtn(col)});
+fitScale();}catch(e){}}
+function save(){try{localStorage.setItem(LS_KEY,JSON.stringify(collect()));pmsgSave('Saved on this device. It will stay until you tap Start over or clear browser data.')}catch(e){pmsgSave('Could not save (private/incognito browsing blocks this).')}}
+function pmsgSave(t){const b=$('#rsave');b.title=t;b.textContent='Saved ✓';setTimeout(()=>b.textContent='Save',1500)}
 $('#rsave').onclick=save;
 function askConfirm(msg){return new Promise(res=>{$('#cmsg').textContent=msg;$('#cmodal').hidden=false;const yes=$('#cyes'),no=$('#cno');function done(v){$('#cmodal').hidden=true;yes.removeEventListener('click',onY);no.removeEventListener('click',onN);res(v)}function onY(){done(true)}function onN(){done(false)}yes.addEventListener('click',onY);no.addEventListener('click',onN)})}
 $('#rreset').onclick=async()=>{if(!(await askConfirm('Start over? This clears your saved resume on this device and cannot be undone.')))return;localStorage.removeItem(LS_KEY);restore({html:ORIG,settings:ORIG_SETTINGS})};
