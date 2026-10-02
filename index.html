@@ -1,6 +1,3 @@
-
-
-Resume builder · HTML
 <!doctype html>
 <html lang="en"><head><meta charset="utf-8"><title>ResumeForge</title>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
@@ -70,19 +67,19 @@ button:focus-visible,select:focus-visible{outline:2px solid var(--glow2);outline
 #resume{width:794px;min-height:1000px;margin:0 auto;background:#fff;color:#222;box-shadow:0 0 0 1px rgba(124,108,246,.25),0 0 50px -10px rgba(124,108,246,.35),0 20px 60px rgba(0,0,0,.55)}
 @media (max-width:900px){
 .tabs{padding:10px 12px 0;overflow-x:auto}
-.app{grid-template-columns:1fr;padding:12px;gap:10px;transition:grid-template-columns .22s ease;align-items:start}
-.app.panelOpen{grid-template-columns:min(220px,56vw) minmax(0,1fr)}
+.app{grid-template-columns:1fr;padding:12px;gap:12px}
 #dopen{display:inline-flex}
-.panel{position:static;width:auto;height:auto;max-height:none;border-radius:14px;transform:none;box-shadow:none;display:none;padding:14px}
-.app.panelOpen .panel{display:block}
-.pmask{display:none!important}
+.panel{position:fixed;inset:0 0 0 auto;width:min(340px,88vw);height:100%;height:100dvh;z-index:60;border-radius:0;transform:translateX(105%);transition:transform .25s ease;box-shadow:-6px 0 24px rgba(0,0,0,.25);padding-top:calc(16px + env(safe-area-inset-top,0px));padding-bottom:calc(16px + env(safe-area-inset-bottom,0px))}
+.panel.open{transform:translateX(0)}
+.pmask{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:55}
+.pmask.open{display:block}
 .pclose{display:block;margin-left:auto;font:20px/1 sans-serif;border:0;background:none;color:var(--ink);cursor:pointer;padding:4px 8px}
-.stage{padding:0 2px;overflow-x:hidden}
+.stage{padding:0 4px;overflow-x:hidden}
 #resume{transform-origin:top left}
 #rwrap{overflow:hidden;margin:0 auto}
 .opts{grid-template-columns:1fr 1fr}
 }
-@media (min-width:901px){.pclose,#dopen{display:none}}
+@media (min-width:901px){.pclose,.pmask,#dopen{display:none}}
 .app[hidden]{display:none}
 .pg{position:relative;margin:0 auto 16px;box-shadow:0 2px 12px rgba(0,0,0,.25);background:#fff}.pg canvas{display:block;width:100%}
 .tx{position:absolute;white-space:pre;line-height:1;color:transparent;background:transparent;outline:none;cursor:text;font-family:Helvetica,Arial,sans-serif}
@@ -104,7 +101,7 @@ button:focus-visible,select:focus-visible{outline:2px solid var(--glow2);outline
 #fx[hidden]{display:none}
 #resume .lnk{color:var(--accent);text-decoration:underline}
 #resume .af{font:11px Inter,sans-serif;border:1px dashed #aaa;background:#fff;color:#555;border-radius:4px;padding:2px}#resume .tools .af{background:#444;color:#fff;border:0}#resume .tools select option{color:#000;background:#fff}
- 
+
 #emenu{position:fixed;z-index:70;background:#1a1f3d;border:1px solid var(--line);border-radius:10px;padding:6px;display:none;flex-direction:column;gap:2px;box-shadow:0 12px 30px rgba(0,0,0,.5)}
 #emenu button{font:13px Inter,sans-serif;border:0;background:none;color:var(--ink);text-align:left;padding:7px 10px;border-radius:6px;cursor:pointer;white-space:nowrap}
 #emenu button:hover{background:rgba(124,108,246,.25)}
@@ -143,7 +140,7 @@ button:focus-visible,select:focus-visible{outline:2px solid var(--glow2);outline
 #resume{grid-template-areas:"head" "main" "side";grid-template-columns:1fr;grid-template-rows:auto auto 1fr}
 #resume header{grid-area:head;background:var(--hbg,transparent);padding:var(--hp,16px) 20px;margin-bottom:var(--hg,0px);min-height:var(--hh,0px);box-sizing:border-box;display:flex;flex-direction:column;justify-content:center;overflow:hidden}
 #resume main,#resume aside{min-height:40px}
- 
+
 #resume section{position:relative}#resume .tools{position:absolute;right:0;top:0;display:flex;flex-wrap:wrap;justify-content:flex-end;max-width:100%;gap:4px;opacity:0;pointer-events:none;z-index:3}#resume section.selected>.tools{opacity:1;pointer-events:auto}#resume .tools>*{border:0;background:#444;color:#fff;border-radius:4px;padding:2px 7px;cursor:pointer}
 #resume .scColor,#resume .af.scColor{padding:0;width:22px;height:20px;background:none;cursor:pointer}
 #resume .scSize{padding:2px;background:#fff;color:#333}
@@ -513,14 +510,16 @@ await saveFile(pdfName.replace(/\.pdf$/i,'')+'-edited.pdf',await doc.save(),'app
 apply();spDefaults();pApply();
 function fitScale(){const wrap=$('#rwrap');
 if(window.innerWidth>900){R.style.transform='';wrap.style.width='';wrap.style.height='';return}
-const avail=document.querySelector('.stage').clientWidth-8,natW=794;
-const scale=Math.min(1,avail/natW);
-R.style.transform='scale('+scale+')';wrap.style.width=(natW*scale)+'px';wrap.style.height='';}
+R.style.transform='';const natW=R.offsetWidth||794,natH=R.offsetHeight||1000;
+const stage=document.querySelector('.stage'),availW=stage.clientWidth-8,availH=window.innerHeight-stage.getBoundingClientRect().top-16;
+const scale=Math.max(0.22,Math.min(1,availW/natW,availH/natH));
+R.style.transform='scale('+scale+')';wrap.style.width=(natW*scale)+'px';wrap.style.height=(natH*scale)+'px'}
 window.addEventListener('resize',fitScale);fitScale();
+let fsT=null;new MutationObserver(()=>{clearTimeout(fsT);fsT=setTimeout(fitScale,150)}).observe(R,{childList:true,subtree:true,attributes:true,characterData:true});
 const panel=document.querySelector('#rsapp .panel');
-$('#dopen').onclick=()=>{$('#rsapp').classList.add('panelOpen');fitScale()};
-function closeP(){$('#rsapp').classList.remove('panelOpen');fitScale()}
-$('#pclose').onclick=closeP;
+$('#dopen').onclick=()=>{panel.classList.add('open');$('#pmask').classList.add('open')};
+function closeP(){panel.classList.remove('open');$('#pmask').classList.remove('open')}
+$('#pclose').onclick=closeP;$('#pmask').onclick=closeP;
 $('#rdl2').onclick=dl;
 const LS_KEY='toolstudio_resume_v1';const ORIG=R.outerHTML;const ORIG_SETTINGS={tpl,accent,font:$('#font').value,fs:$('#fs').value,hbg:'',htx:'',bls:'disc',sp:{}};
 document.querySelectorAll('[data-sp]').forEach(i=>ORIG_SETTINGS.sp[i.dataset.sp]=i.value);
@@ -539,11 +538,11 @@ $('#rsave').onclick=save;
 function askConfirm(msg){return new Promise(res=>{$('#cmsg').textContent=msg;$('#cmodal').hidden=false;const yes=$('#cyes'),no=$('#cno');function done(v){$('#cmodal').hidden=true;yes.removeEventListener('click',onY);no.removeEventListener('click',onN);res(v)}function onY(){done(true)}function onN(){done(false)}yes.addEventListener('click',onY);no.addEventListener('click',onN)})}
 $('#rreset').onclick=async()=>{if(!(await askConfirm('Start over? This clears your saved resume on this device and cannot be undone.')))return;localStorage.removeItem(LS_KEY);restore({html:ORIG,settings:ORIG_SETTINGS})};
 try{const raw=localStorage.getItem(LS_KEY);if(raw){const parsed=JSON.parse(raw);restore(parsed);$('#startScreen').hidden=true;save()}}catch(e){}
- 
+
 const SS=$('#startScreen');
 $('#ssStart').onclick=()=>{SS.hidden=true};
 document.querySelectorAll('.ptb').forEach(b=>b.onclick=()=>{document.querySelectorAll('.ptb').forEach(x=>x.setAttribute('aria-pressed',x===b));$('#pdDesign').hidden=b.dataset.pt!=='design';$('#pdData').hidden=b.dataset.pt!=='data'});
- 
+
 /* ---- Named templates (saved until you delete them) ---- */
 const TPL_KEY='toolstudio_templates_v1';
 function tplStore(){try{return JSON.parse(localStorage.getItem(TPL_KEY)||'{}')}catch(e){return{}}}
@@ -553,7 +552,7 @@ $('#tplload').onclick=()=>{const n=$('#tpllist').value;if(!n)return;const st=tpl
 $('#tpldel').onclick=async()=>{const n=$('#tpllist').value;if(!n)return;if(!(await askConfirm('Delete the template "'+n+'"? This cannot be undone.')))return;const st=tplStore();delete st[n];localStorage.setItem(TPL_KEY,JSON.stringify(st));tplRefresh()};
 function pmsgR2(t){const b=$('#tplsave');b.title=t;const o=b.textContent;b.textContent=t.length<14?t:'Done';setTimeout(()=>b.textContent=o,1500)}
 tplRefresh();
- 
+
 /* ---- Profile info + autofill (saved until you delete it) ---- */
 const PF_KEY='toolstudio_profile_v1';
 const escH=t=>(t||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
@@ -582,4 +581,3 @@ pl.innerHTML=pf.proj.map(r=>pfItemHTML(r[0],r[1],'',r[2])).join('');pl.querySele
 pmsgR2('Resume filled in.')};
 </script>
 </body></html>
- 
