@@ -117,7 +117,8 @@ button:focus-visible,select:focus-visible{outline:2px solid var(--glow2);outline
 @media print{#fx{display:none}#emenu{display:none!important}#cmodal{display:none!important}body{background:#fff}.topbar{display:none!important}#startScreen{display:none!important}.app{display:block;padding:0}.panel{display:none!important}.stage{overflow:visible;padding:0!important}#rwrap{width:auto!important;height:auto!important;overflow:visible!important;margin:0!important}#resume{box-shadow:none;margin:0;transform:none!important}@page{margin:0}}
 </style>
 <style id="rcss">
-#resume{--accent:#1f4e79;--font:Inter,system-ui,sans-serif;--fs:14px;font:var(--fs)/1.5 var(--font);display:grid;box-sizing:border-box;padding:var(--pp,44px);gap:0 32px;position:relative}
+#resume{--accent:#1f4e79;--font:Inter,system-ui,sans-serif;--fs:14px;font:var(--fs)/1.5 var(--font);display:grid;box-sizing:border-box;padding:var(--pp,44px);gap:0 32px;position:relative;-webkit-print-color-adjust:exact;print-color-adjust:exact;color-adjust:exact}
+#resume *{-webkit-print-color-adjust:exact;print-color-adjust:exact;color-adjust:exact}
 #resume [contenteditable]{outline:none;border-radius:3px}
 #resume [contenteditable]{outline:1px dashed rgba(120,120,120,.35)}#resume h1[contenteditable],#resume h2[contenteditable]{outline:1px dashed rgba(120,120,120,.25)}#resume [contenteditable]:hover{background:rgba(120,120,120,.12)}#resume [contenteditable]:focus{background:rgba(42,109,244,.12);outline-color:#2a6df4}
 @media print{#resume [contenteditable],#resume .item.selected,#resume section.selected{outline:none!important}}
@@ -136,9 +137,10 @@ button:focus-visible,select:focus-visible{outline:2px solid var(--glow2);outline
 #resume .item.selected{outline:1.5px dashed #e5484d;outline-offset:3px;border-radius:3px}
 #resume section.selected{outline:1.5px dashed #2a6df4;outline-offset:4px;border-radius:4px}
 #resume .add,#resume .hladd{border:1px dashed #aaa;background:none;border-radius:6px;padding:4px 10px;cursor:pointer;color:#555}
-@media print{#resume .ui{display:none}}
+@media print{#resume .ui{display:none!important}}
 #resume{grid-template-areas:"head" "main" "side";grid-template-columns:1fr;grid-template-rows:auto auto 1fr}
-#resume header{grid-area:head;background:var(--hbg,transparent);padding:var(--hp,16px) 20px;margin-bottom:var(--hg,0px);min-height:var(--hh,0px);box-sizing:border-box;display:flex;flex-direction:column;justify-content:center;overflow:hidden}
+#resume header{grid-area:head;background:var(--hbg,transparent);color:var(--htxt,inherit);padding:var(--hp,16px) 20px;margin-bottom:var(--hg,0px);min-height:var(--hh,0px);box-sizing:border-box;display:flex;flex-direction:column;justify-content:center;overflow:hidden}
+#resume header p,#resume header span{color:inherit}
 #resume main,#resume aside{min-height:40px}
 
 #resume section{position:relative}#resume .tools{position:absolute;right:0;top:0;display:flex;flex-wrap:wrap;justify-content:flex-end;max-width:100%;gap:4px;opacity:0;pointer-events:none;z-index:3}#resume section.selected>.tools{opacity:1;pointer-events:auto}#resume .tools>*{border:0;background:#444;color:#fff;border-radius:4px;padding:2px 7px;cursor:pointer}
@@ -168,7 +170,7 @@ button:focus-visible,select:focus-visible{outline:2px solid var(--glow2);outline
 #resume.t-classic h2{border:0;text-align:center}
 /* sidebar */
 #resume.t-sidebar{grid-template-areas:"head head" "side main";grid-template-columns:230px 1fr;grid-template-rows:auto 1fr;padding:0}
-#resume.t-sidebar header{background:var(--hbg,var(--accent));padding:var(--hp,36px) var(--pp,44px)}
+#resume.t-sidebar header{background:var(--hbg,var(--accent));padding:var(--hp,36px) var(--pp,44px);color:var(--htxt,#fff)}
 #resume.t-sidebar h1,#resume.t-sidebar .contact,#resume.t-sidebar .role{color:var(--htxt,#fff)}#resume.t-sidebar [contenteditable]:hover{background:rgba(255,255,255,.15)}
 #resume.t-sidebar aside{background:#f2f2f2;padding:8px 24px 30px var(--pp,44px)}#resume.t-sidebar main{padding:8px var(--pp,44px) 30px 0}
 /* bold */
@@ -280,6 +282,11 @@ button:focus-visible,select:focus-visible{outline:2px solid var(--glow2);outline
 <header><h1 contenteditable>Suneel Kumar</h1><p class="role" contenteditable>Software &amp; Game Developer</p><p class="contact" contenteditable>suneel321202@gmail.com &nbsp;|&nbsp; +91 9057199367</p><p contenteditable>LinkedIn: suneel-kumar-197180191</p><p contenteditable>GitHub: SuneelKumarDuvesh</p><button class="hladd ui" id="hln" style="margin-top:4px">+ Add line</button></header>
 <main>
 <section><h2>Introduction</h2><p contenteditable>Software and Game Developer with experience in C#, Unity3D, Blender and front-end web development.</p></section>
+<section><h2>Education</h2><div id="edu">
+<div class="item"><div class="row"><span contenteditable>B.Tech, Computer Science</span><span contenteditable>2019 – 2023</span></div><p class="sub" contenteditable>Indian Institute of Information Technology (IIIT Kota)</p><p contenteditable>CGPA: 6.76</p><button class="x ui" title="Remove">×</button></div>
+<div class="item"><div class="row"><span contenteditable>Senior Secondary School (12th)</span><span contenteditable>2017</span></div><p class="sub" contenteditable>Jaya Public School, Bharatpur</p><p contenteditable>78.8%</p><button class="x ui" title="Remove">×</button></div>
+<div class="item"><div class="row"><span contenteditable>Secondary School (10th)</span><span contenteditable>2015</span></div><p class="sub" contenteditable>Jaya Public School, Bharatpur</p><p contenteditable>85.5%</p><button class="x ui" title="Remove">×</button></div>
+</div><button class="add ui" data-t="edu">+ Add education</button></section>
 <section><h2>Projects</h2><div id="exp">
 <div class="item"><div class="row"><span contenteditable>Modular Firebase Authentication System</span><span contenteditable></span></div><div class="blk"><div class="lf" data-mode="inline"><span class="lfl" contenteditable>Tools:</span><span class="lfc" contenteditable>Firebase, Unity, C#, Google Sign-In for Unity package, Firebase SDK</span></div><button class="lfm ui" title="Switch between same line and its own line">⇄ Line</button><button class="x ui" title="Remove">×</button></div><p contenteditable>A robust, reusable and extensible authentication system for Unity projects that integrates with Firebase, providing a simple, event-driven way to handle multiple sign-in providers.</p><div class="itools ui"><select class="af" aria-label="Add field"><option value="">+ Add field...</option><option value="date">Date</option><option value="sub">Subtitle</option><option value="line">Text line</option><option value="text">Text area</option><option value="bul">Bullet list</option><option value="link">Link</option><option value="row">Row (left/right, wraps)</option><option value="label">Label + text (toggle line)</option></select></div><button class="x ui" title="Remove">×</button></div>
 <div class="item"><div class="row"><span contenteditable>Unity Ad Monetization System</span><span contenteditable></span></div><div class="blk"><div class="lf" data-mode="inline"><span class="lfl" contenteditable>Tools:</span><span class="lfc" contenteditable>Unity, C#</span></div><button class="lfm ui" title="Switch between same line and its own line">⇄ Line</button><button class="x ui" title="Remove">×</button></div><p contenteditable>A centralized, modular and scalable ad management system for Unity, with a clean API to implement rewarded, interstitial and banner ads using the Unity Ads SDK — robust for production and flexible for rapid development.</p><div class="itools ui"><select class="af" aria-label="Add field"><option value="">+ Add field...</option><option value="date">Date</option><option value="sub">Subtitle</option><option value="line">Text line</option><option value="text">Text area</option><option value="bul">Bullet list</option><option value="link">Link</option><option value="row">Row (left/right, wraps)</option><option value="label">Label + text (toggle line)</option></select></div><button class="x ui" title="Remove">×</button></div>
@@ -288,11 +295,6 @@ button:focus-visible,select:focus-visible{outline:2px solid var(--glow2);outline
 </div><button class="add ui" data-t="exp">+ Add project</button></section>
 </main>
 <aside>
-<section><h2>Education</h2><div id="edu">
-<div class="item"><div class="row"><span contenteditable>B.Tech, Computer Science</span><span contenteditable>2019 – 2023</span></div><p class="sub" contenteditable>Indian Institute of Information Technology (IIIT Kota)</p><p contenteditable>CGPA: 6.76</p><button class="x ui" title="Remove">×</button></div>
-<div class="item"><div class="row"><span contenteditable>Senior Secondary School (12th)</span><span contenteditable>2017</span></div><p class="sub" contenteditable>Jaya Public School, Bharatpur</p><p contenteditable>78.8%</p><button class="x ui" title="Remove">×</button></div>
-<div class="item"><div class="row"><span contenteditable>Secondary School (10th)</span><span contenteditable>2015</span></div><p class="sub" contenteditable>Jaya Public School, Bharatpur</p><p contenteditable>85.5%</p><button class="x ui" title="Remove">×</button></div>
-</div><button class="add ui" data-t="edu">+ Add education</button></section>
 <section><h2>Technical Skills</h2><div id="sk">
 <div class="blk"><div class="lf" data-mode="block"><span class="lfl" contenteditable>Languages</span><span class="lfc" contenteditable>Python, C#, HTML, CSS, JavaScript, MySQL, jQuery</span></div><button class="lfm ui" title="Switch between same line and its own line">⇄ Line</button><button class="x ui" title="Remove">×</button></div>
 <div class="blk"><div class="lf" data-mode="block"><span class="lfl" contenteditable>Tools</span><span class="lfc" contenteditable>Unity 3D, Blender, Git, Figma, Inkscape, Canva, Generative AI</span></div><button class="lfm ui" title="Switch between same line and its own line">⇄ Line</button><button class="x ui" title="Remove">×</button></div>
@@ -321,7 +323,10 @@ document.querySelectorAll('#tpl button').forEach(b=>b.setAttribute('aria-pressed
 document.querySelectorAll('#sw button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.c===accent))}
 const sw=$('#sw');colors.forEach(c=>{const b=document.createElement('button');b.style.background=c;b.dataset.c=c;b.title=c;b.setAttribute('aria-label','Color '+c);b.onclick=()=>{accent=c;apply()};sw.appendChild(b)});
 const ci=document.createElement('input');ci.type='color';ci.title='Custom color';ci.oninput=()=>{accent=ci.value;apply()};sw.appendChild(ci);
-document.querySelectorAll('#tpl button').forEach(b=>b.onclick=()=>{tpl=b.dataset.v;apply();spDefaults()});
+function clearElementOverrides(){R.querySelectorAll('*').forEach(el=>{el.style.removeProperty('color');el.style.removeProperty('font-size')});R.style.removeProperty('--hbg');R.style.removeProperty('--htxt');
+if(typeof activeField!=='undefined')activeField=null;const sl=$('#selLabel'),sc=$('#selColor'),ss=$('#selSize'),sr=$('#selReset');
+if(sl)sl.textContent='Click any text, row or section on the resume, then set its color or size here.';if(sc)sc.disabled=true;if(ss)ss.disabled=true;if(sr)sr.disabled=true}
+document.querySelectorAll('#tpl button').forEach(b=>b.onclick=()=>{tpl=b.dataset.v;clearElementOverrides();apply();spDefaults()});
 $('#font').onchange=apply;$('#fs').oninput=apply;
 const OP='<option value="line">Text line</option><option value="text">Text area</option><option value="bul">Bullet list</option><option value="link">Link</option><option value="row">Row (left/right, wraps)</option><option value="label">Label + text (toggle line)</option></select>',AFI='<select class="af" aria-label="Add field"><option value="">+ Add field...</option><option value="date">Date</option><option value="sub">Subtitle</option>'+OP,AFS='<select class="af" aria-label="Add field"><option value="">+ Add field...</option>'+OP;
 function pApply(){}
