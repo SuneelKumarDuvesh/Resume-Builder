@@ -1,3 +1,6 @@
+
+
+Resume builder · HTML
 <!doctype html>
 <html lang="en"><head><meta charset="utf-8"><title>ResumeForge</title>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
@@ -67,18 +70,19 @@ button:focus-visible,select:focus-visible{outline:2px solid var(--glow2);outline
 #resume{width:794px;min-height:1000px;margin:0 auto;background:#fff;color:#222;box-shadow:0 0 0 1px rgba(124,108,246,.25),0 0 50px -10px rgba(124,108,246,.35),0 20px 60px rgba(0,0,0,.55)}
 @media (max-width:900px){
 .tabs{padding:10px 12px 0;overflow-x:auto}
-.app{grid-template-columns:1fr;padding:12px;gap:12px}
+.app{grid-template-columns:1fr;padding:12px;gap:10px;transition:grid-template-columns .22s ease;align-items:start}
+.app.panelOpen{grid-template-columns:min(220px,56vw) minmax(0,1fr)}
 #dopen{display:inline-flex}
-.panel{position:fixed;inset:0 0 0 auto;width:min(340px,88vw);height:100%;height:100dvh;z-index:60;border-radius:0;transform:translateX(105%);transition:transform .25s ease;box-shadow:-6px 0 24px rgba(0,0,0,.25);padding-top:calc(16px + env(safe-area-inset-top,0px));padding-bottom:calc(16px + env(safe-area-inset-bottom,0px))}
-.panel.open{transform:translateX(0)}
-.pmask{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:55}
-.pmask.open{display:block}
+.panel{position:static;width:auto;height:auto;max-height:none;border-radius:14px;transform:none;box-shadow:none;display:none;padding:14px}
+.app.panelOpen .panel{display:block}
+.pmask{display:none!important}
 .pclose{display:block;margin-left:auto;font:20px/1 sans-serif;border:0;background:none;color:var(--ink);cursor:pointer;padding:4px 8px}
-.stage{padding:0 4px;overflow-x:hidden}
+.stage{padding:0 2px;overflow-x:hidden}
 #resume{transform-origin:top left}
+#rwrap{overflow:hidden;margin:0 auto}
 .opts{grid-template-columns:1fr 1fr}
 }
-@media (min-width:901px){.pclose,.pmask,#dopen{display:none}}
+@media (min-width:901px){.pclose,#dopen{display:none}}
 .app[hidden]{display:none}
 .pg{position:relative;margin:0 auto 16px;box-shadow:0 2px 12px rgba(0,0,0,.25);background:#fff}.pg canvas{display:block;width:100%}
 .tx{position:absolute;white-space:pre;line-height:1;color:transparent;background:transparent;outline:none;cursor:text;font-family:Helvetica,Arial,sans-serif}
@@ -94,11 +98,13 @@ button:focus-visible,select:focus-visible{outline:2px solid var(--glow2);outline
 #fx{position:fixed;z-index:50;display:flex;gap:2px;background:#1a1f3d;border:1px solid var(--line,#333);border-radius:7px;padding:2px;box-shadow:0 6px 18px rgba(0,0,0,.4)}
 #fx button{width:20px;height:20px;border-radius:4px;border:0;background:#333;color:#fff;font:11px/18px sans-serif;padding:0;cursor:pointer}
 #fx button[data-f="del"]{background:#e5484d}
+#fx input[type="color"]{width:20px;height:20px;padding:0;border:0;border-radius:4px;cursor:pointer}
+#fx input[type="number"]{width:32px;height:20px;border:0;border-radius:4px;font:10px sans-serif;padding:0 2px}
 #fx button:hover{filter:brightness(1.2)}
 #fx[hidden]{display:none}
 #resume .lnk{color:var(--accent);text-decoration:underline}
 #resume .af{font:11px Inter,sans-serif;border:1px dashed #aaa;background:#fff;color:#555;border-radius:4px;padding:2px}#resume .tools .af{background:#444;color:#fff;border:0}#resume .tools select option{color:#000;background:#fff}
-
+ 
 #emenu{position:fixed;z-index:70;background:#1a1f3d;border:1px solid var(--line);border-radius:10px;padding:6px;display:none;flex-direction:column;gap:2px;box-shadow:0 12px 30px rgba(0,0,0,.5)}
 #emenu button{font:13px Inter,sans-serif;border:0;background:none;color:var(--ink);text-align:left;padding:7px 10px;border-radius:6px;cursor:pointer;white-space:nowrap}
 #emenu button:hover{background:rgba(124,108,246,.25)}
@@ -137,8 +143,12 @@ button:focus-visible,select:focus-visible{outline:2px solid var(--glow2);outline
 #resume{grid-template-areas:"head" "main" "side";grid-template-columns:1fr;grid-template-rows:auto auto 1fr}
 #resume header{grid-area:head;background:var(--hbg,transparent);padding:var(--hp,16px) 20px;margin-bottom:var(--hg,0px);min-height:var(--hh,0px);box-sizing:border-box;display:flex;flex-direction:column;justify-content:center;overflow:hidden}
 #resume main,#resume aside{min-height:40px}
-
-#resume section{position:relative}#resume .tools{position:absolute;right:0;top:0;display:flex;flex-wrap:wrap;justify-content:flex-end;max-width:100%;gap:4px;opacity:0;pointer-events:none;z-index:3}#resume section.selected>.tools{opacity:1;pointer-events:auto}#resume .tools>*{border:0;background:#444;color:#fff;border-radius:4px;padding:2px 7px;cursor:pointer}#resume .tools .rs{background:#e5484d}#resume .tools .dh{cursor:grab}
+ 
+#resume section{position:relative}#resume .tools{position:absolute;right:0;top:0;display:flex;flex-wrap:wrap;justify-content:flex-end;max-width:100%;gap:4px;opacity:0;pointer-events:none;z-index:3}#resume section.selected>.tools{opacity:1;pointer-events:auto}#resume .tools>*{border:0;background:#444;color:#fff;border-radius:4px;padding:2px 7px;cursor:pointer}
+#resume .scColor,#resume .af.scColor{padding:0;width:22px;height:20px;background:none;cursor:pointer}
+#resume .scSize{padding:2px;background:#fff;color:#333}
+#resume .itools .scColor{width:20px;height:18px;padding:0;border:1px dashed #aaa;background:none}
+#resume .itools .scSize{width:34px;border:1px dashed #aaa;background:#fff;color:#333;border-radius:4px;padding:1px}#resume .tools .rs{background:#e5484d}#resume .tools .dh{cursor:grab}
 #resume .blk{position:relative}#resume .blk:hover>.x{opacity:1}
 #resume ul.bl{margin:0 0 var(--pg,6px);padding-left:1.3em;list-style-type:var(--ls,disc)}#resume ul.bl li::marker{color:var(--accent)}
 #resume .tb{white-space:pre-wrap;margin:0 0 var(--pg,6px)}
@@ -202,6 +212,11 @@ button:focus-visible,select:focus-visible{outline:2px solid var(--glow2);outline
 <button class="pclose" id="pclose" aria-label="Close panel">×</button><h2>Editor &amp; Settings</h2><p>Click any text on the resume to edit it, including section titles.</p>
 <div class="ptabs"><button class="ptb" data-pt="design" aria-pressed="true">Design &amp; Layout</button><button class="ptb" data-pt="data" aria-pressed="false">My Data</button></div>
 <div id="pdDesign">
+<h3>Selected Element</h3>
+<p id="selLabel" style="margin-top:0">Click any text, row or section on the resume, then set its color or size here.</p>
+<div class="opts"><label class="sl" style="grid-column:1/3">Color <input type="color" id="selColor" disabled style="width:100%;height:28px"></label></div>
+<label class="sl">Size (pt) <input type="number" id="selSize" min="6" max="60" disabled style="border:1px solid var(--line);background:#0d1226;color:var(--ink);border-radius:8px;padding:6px;width:100%"></label>
+<button id="selReset" disabled style="margin-top:6px;width:100%">Reset this element</button>
 <h3>Template</h3>
 <div class="opts" id="tpl"><button data-v="t-classic">Classic</button><button data-v="t-sidebar">Sidebar</button><button data-v="t-bold">Bold</button><button data-v="t-minimal">Minimal</button></div>
 <h3>Color theme</h3>
@@ -257,12 +272,14 @@ button:focus-visible,select:focus-visible{outline:2px solid var(--glow2);outline
 </div>
 <h3 style="margin-top:22px">Export</h3>
 <div class="act">
-<button class="primary" id="pr">Download as PDF</button>
-<p style="margin-top:6px">Opens your browser's print dialog — choose "Save as PDF." Only the resume itself is included, nothing else on this page.</p>
+<button class="primary" id="pr">Download PDF (matches your template)</button>
+<p style="margin-top:6px">Opens your browser's print dialog — choose "Save as PDF." Looks exactly like your selected template: same colors, fonts, spacing and layout. Only the resume itself is included.</p>
+<button id="prats" style="margin-top:8px">Download ATS Text PDF</button>
+<p style="margin-top:6px">A plain, single-column, real-text version for applicant tracking systems. Won't match your template's look.</p>
 <span id="msg" style="font-size:12px;color:var(--mute)" role="status"></span>
 </div>
 </section>
-<div class="stage"><div id="resume" class="t-classic">
+<div class="stage"><div id="rwrap"><div id="resume" class="t-classic">
 <header><h1 contenteditable>Suneel Kumar</h1><p class="role" contenteditable>Software &amp; Game Developer</p><p class="contact" contenteditable>suneel321202@gmail.com &nbsp;|&nbsp; +91 9057199367</p><p contenteditable>LinkedIn: suneel-kumar-197180191</p><p contenteditable>GitHub: SuneelKumarDuvesh</p><button class="hladd ui" id="hln" style="margin-top:4px">+ Add line</button></header>
 <main>
 <section><h2>Introduction</h2><p contenteditable>Software and Game Developer with experience in C#, Unity3D, Blender and front-end web development.</p></section>
@@ -287,7 +304,7 @@ button:focus-visible,select:focus-visible{outline:2px solid var(--glow2);outline
 <section><h2>Languages</h2><div id="lang"><p contenteditable>Hindi</p><p contenteditable>English</p></div><button class="add ui" data-t="lang">+ Add language</button></section>
 <section><h2>Interests</h2><div id="int"><p contenteditable>Music</p><p contenteditable>Drawing</p></div><button class="add ui" data-t="int">+ Add interest</button></section>
 </aside>
-</div></div></div>
+</div></div></div></div>
 <div class="app" id="pdfapp" hidden style="display:none!important">
 <section class="panel" aria-label="PDF editor controls"><h2>PDF editor</h2><p>Upload a PDF, click any text and change it. The file stays in your browser.</p>
 <div class="act" style="margin-top:0"><button class="primary" onclick="document.getElementById('pdfin').click()">Upload PDF</button><button id="addbox" aria-pressed="false">Add or replace text (draw a box)</button></div>
@@ -335,10 +352,29 @@ let lastOwner=null;function ownerOf(t){if(!t||!t.closest)return null;return t.cl
 /* Click-to-select: whole-item/section deletion only shows once you click that item/section directly */
 let selOwner=null;
 function selectOwner(o){if(selOwner&&selOwner!==o)selOwner.classList.remove('selected');if(o&&o!==selOwner)o.classList.add('selected');selOwner=o}
+let activeField=null;
+function labelFor(el){const sec=el.closest('section'),h2=sec&&sec.querySelector(':scope>h2'),base=h2?h2.textContent.trim()+' — ':'';
+if(el.tagName==='H1')return'Your name';
+if(el.tagName==='H2')return'Section heading: '+el.textContent.trim();
+if(el.classList.contains('role'))return'Job title';
+if(el.classList.contains('contact'))return'Contact line';
+if(el.classList.contains('sub'))return base+'Subtitle';
+if(el.classList.contains('row'))return base+'Title & date row';
+if(el.classList.contains('item'))return base+'Whole subsection';
+if(el.tagName==='SECTION')return'Whole section: '+(h2?h2.textContent.trim():'Untitled');
+return base+'Text'}
+function setActiveField(el){activeField=el;const cs=getComputedStyle(el);
+$('#selColor').value=rgbToHex(cs.color);$('#selColor').disabled=false;
+$('#selSize').value=Math.round(parseFloat(cs.fontSize));$('#selSize').disabled=false;
+$('#selReset').disabled=false;$('#selLabel').textContent='Editing: '+labelFor(el)}
+$('#selColor').oninput=()=>{if(activeField)activeField.style.color=$('#selColor').value};
+$('#selSize').oninput=()=>{if(activeField)activeField.style.fontSize=$('#selSize').value+'pt'};
+$('#selReset').onclick=()=>{if(!activeField)return;activeField.style.color='';activeField.style.fontSize='';const cs=getComputedStyle(activeField);$('#selColor').value=rgbToHex(cs.color);$('#selSize').value=Math.round(parseFloat(cs.fontSize))};
 R.addEventListener('click',e=>{if(e.target.closest('.colAdd,.add,.x,.rs,.mv,.dh,.imv'))return;
 const fa=e.target.closest('.frowadd');if(fa){fa.insertAdjacentHTML('beforebegin','<span contenteditable>Item</span>');return}
 const lm=e.target.closest('.lfm');if(lm){const lf=lm.parentElement.querySelector('.lf');lf.dataset.mode=lf.dataset.mode==='inline'?'block':'inline';return}
-selectOwner(ownerOf(e.target))});
+selectOwner(ownerOf(e.target));
+const tgt=ftarget(e.target)||ownerOf(e.target);if(tgt)setActiveField(tgt)});
 document.addEventListener('click',e=>{if(!R.contains(e.target)&&selOwner){selOwner.classList.remove('selected');selOwner=null}});
 function setOwner(o){if(o===lastOwner)return;if(lastOwner)lastOwner.classList.remove('hshow');if(o)o.classList.add('hshow');lastOwner=o}
 R.addEventListener('mouseover',e=>setOwner(ownerOf(e.target)));
@@ -348,8 +384,10 @@ const fx=document.createElement('div');fx.id='fx';fx.hidden=true;fx.innerHTML='<
 /* Explicit "+ Add section" button pinned at the end of each column (no accidental triggers) */
 function addSectionBtn(col){const b=document.createElement('button');b.className='colAdd ui';b.textContent='+ Add section';b.onclick=()=>{const s=document.createElement('section');s.innerHTML='<h2>New section</h2><div class="list">'+ITEM+'</div><button class="add ui">+ Add subsection</button>';prep(s);col.insertBefore(s,b)};col.appendChild(b)}
 addSectionBtn(R.querySelector('main'));addSectionBtn(R.querySelector('aside'));
-function ftarget(t){if(!t.closest)return null;const el=t.closest('[contenteditable]');if(!el||!R.contains(el)||el.closest('.tools')||el.matches('h1,h2'))return null;return el.closest('.blk')||el.closest('.row')||el}
-function showFx(el){fcur=el;const q=el.getBoundingClientRect();fx.style.left=(q.right-9)+'px';fx.style.top=(q.top-9)+'px';fx.hidden=false;clearTimeout(ft)}
+function ftarget(t){if(!t.closest)return null;const el=t.closest('[contenteditable]');if(!el||!R.contains(el)||el.closest('.tools'))return null;return el.closest('.blk')||el.closest('.row')||el}
+function rgbToHex(c){const m=c.match(/\d+/g);if(!m)return'#000000';return'#'+m.slice(0,3).map(n=>(+n).toString(16).padStart(2,'0')).join('')}
+function showFx(el){const struct=el.tagName==='H1'||el.tagName==='H2';if(struct){fx.hidden=true;fcur=null;return}
+fcur=el;const q=el.getBoundingClientRect();fx.style.left=(q.right-9)+'px';fx.style.top=(q.top-9)+'px';fx.hidden=false;clearTimeout(ft)}
 function fieldSibs(el){return el.parentElement?[...el.parentElement.children].filter(c=>!c.classList.contains('ui')):[]}
 function fieldMove(el,dir){const sibs=fieldSibs(el),i=sibs.indexOf(el);if(i<0)return;if(dir==='up'&&i>0)el.parentElement.insertBefore(el,sibs[i-1]);if(dir==='down'&&i<sibs.length-1)el.parentElement.insertBefore(sibs[i+1],el);const q=el.getBoundingClientRect();fx.style.left=(q.right-9)+'px';fx.style.top=(q.top-9)+'px'}
 R.addEventListener('mouseover',e=>{const t=ftarget(e.target);if(t)showFx(t)});
@@ -360,7 +398,7 @@ window.addEventListener('scroll',()=>fx.hidden=true,true);
 fx.addEventListener('click',e=>{if(!fcur)return;const b=e.target.closest('button');if(!b)return;const f=b.dataset.f;
 if(f==='up'){fieldMove(fcur,'up');return}
 if(f==='down'){fieldMove(fcur,'down');return}
-const row=fcur.parentElement;fcur.remove();if(row&&row.classList.contains('row')&&!row.children.length)row.remove();fx.hidden=true;fcur=null});
+if(f==='del'){const row=fcur.parentElement;fcur.remove();if(row&&row.classList.contains('row')&&!row.children.length)row.remove();fx.hidden=true;fcur=null}});
 $('#hln').onclick=()=>{const c=R.querySelector('header .contact');c.insertAdjacentHTML('afterend','<p contenteditable>New line</p>');c.nextElementSibling.focus()};
 $('#bls').onchange=e=>R.style.setProperty('--ls',e.target.value);
 function prep(s){s.querySelector('h2').contentEditable=true;if(!s.querySelector('.tools')){const t=document.createElement('div');t.className='tools ui';t.innerHTML='<span class="dh" draggable="true" title="Drag to move section">⠿ Move</span><button class="mv" data-d="-1" title="Move up">▲</button><button class="mv" data-d="1" title="Move down">▼</button>'+AFS+'<button class="rs">Remove</button>';s.appendChild(t)}}
@@ -392,7 +430,7 @@ if(el.classList.contains('tb')){return el.textContent.trim()?[{t:el.textContent.
 if(el.classList.contains('sub')){return el.textContent.trim()?[{t:el.textContent.trim(),i:1}]:[]}
 if(el.matches&&el.matches('p,span')){return el.textContent.trim()?[{t:el.textContent.trim()}]:[]}
 return[]}
-async function dl(){try{
+async function dlAts(){try{
 if(!(window.jspdf&&window.jspdf.jsPDF)){pmsgR('PDF engine still loading — wait a second and try again.');return}
 pmsgR('Building PDF…');
 const {jsPDF}=window.jspdf,doc=new jsPDF({unit:'pt',format:'a4'}),M=48,PW=595.28,PH=841.89,W=PW-2*M;let y=M;
@@ -420,7 +458,8 @@ await saveFile('resume.pdf',doc.output('blob'),'application/pdf');
 pmsgR('Downloaded — real selectable text, ATS-friendly.')
 }catch(err){pmsgR('Could not build the PDF: '+(err&&err.message?err.message:err))}}
 function pmsgR(t){const m=$('#msg');if(m)m.textContent=t}
-$('#pr').onclick=dl;
+function dl(){window.print()}
+$('#pr').onclick=dl;$('#prats').onclick=dlAts;
 document.querySelectorAll('.tabs button').forEach(b=>b.onclick=()=>{$('#rsapp').hidden=b.dataset.tab!=='rs';$('#pdfapp').hidden=b.dataset.tab!=='pdf';document.querySelectorAll('.tabs button').forEach(x=>x.setAttribute('aria-pressed',x===b))});
 let pdfBytes=null,pdfName='',spans=[],boxes=[],draw=false,ds=null;const pmsg=t=>$('#pmsg').textContent=t;
 async function saveFile(name,data,mime){
@@ -472,12 +511,16 @@ bx.innerText.split('\n').forEach((ln,i)=>{const tx=ln.replace(/[^ -~\u00a0-\u00f
 await saveFile(pdfName.replace(/\.pdf$/i,'')+'-edited.pdf',await doc.save(),'application/pdf');
 }catch(err){pmsg(err&&err.code==='declined'?'Save cancelled.':'Could not build the PDF: '+(err.message||err))}};
 apply();spDefaults();pApply();
-function fitScale(){if(window.innerWidth>900){R.style.transform='';return}const avail=document.querySelector('.stage').clientWidth-8;R.style.transform='scale('+Math.min(1,avail/794)+')'}
+function fitScale(){const wrap=$('#rwrap');
+if(window.innerWidth>900){R.style.transform='';wrap.style.width='';wrap.style.height='';return}
+const avail=document.querySelector('.stage').clientWidth-8,natW=794;
+const scale=Math.min(1,avail/natW);
+R.style.transform='scale('+scale+')';wrap.style.width=(natW*scale)+'px';wrap.style.height='';}
 window.addEventListener('resize',fitScale);fitScale();
 const panel=document.querySelector('#rsapp .panel');
-$('#dopen').onclick=()=>{panel.classList.add('open');$('#pmask').classList.add('open')};
-function closeP(){panel.classList.remove('open');$('#pmask').classList.remove('open')}
-$('#pclose').onclick=closeP;$('#pmask').onclick=closeP;
+$('#dopen').onclick=()=>{$('#rsapp').classList.add('panelOpen');fitScale()};
+function closeP(){$('#rsapp').classList.remove('panelOpen');fitScale()}
+$('#pclose').onclick=closeP;
 $('#rdl2').onclick=dl;
 const LS_KEY='toolstudio_resume_v1';const ORIG=R.outerHTML;const ORIG_SETTINGS={tpl,accent,font:$('#font').value,fs:$('#fs').value,hbg:'',htx:'',bls:'disc',sp:{}};
 document.querySelectorAll('[data-sp]').forEach(i=>ORIG_SETTINGS.sp[i.dataset.sp]=i.value);
@@ -496,11 +539,11 @@ $('#rsave').onclick=save;
 function askConfirm(msg){return new Promise(res=>{$('#cmsg').textContent=msg;$('#cmodal').hidden=false;const yes=$('#cyes'),no=$('#cno');function done(v){$('#cmodal').hidden=true;yes.removeEventListener('click',onY);no.removeEventListener('click',onN);res(v)}function onY(){done(true)}function onN(){done(false)}yes.addEventListener('click',onY);no.addEventListener('click',onN)})}
 $('#rreset').onclick=async()=>{if(!(await askConfirm('Start over? This clears your saved resume on this device and cannot be undone.')))return;localStorage.removeItem(LS_KEY);restore({html:ORIG,settings:ORIG_SETTINGS})};
 try{const raw=localStorage.getItem(LS_KEY);if(raw){const parsed=JSON.parse(raw);restore(parsed);$('#startScreen').hidden=true;save()}}catch(e){}
-
+ 
 const SS=$('#startScreen');
 $('#ssStart').onclick=()=>{SS.hidden=true};
 document.querySelectorAll('.ptb').forEach(b=>b.onclick=()=>{document.querySelectorAll('.ptb').forEach(x=>x.setAttribute('aria-pressed',x===b));$('#pdDesign').hidden=b.dataset.pt!=='design';$('#pdData').hidden=b.dataset.pt!=='data'});
-
+ 
 /* ---- Named templates (saved until you delete them) ---- */
 const TPL_KEY='toolstudio_templates_v1';
 function tplStore(){try{return JSON.parse(localStorage.getItem(TPL_KEY)||'{}')}catch(e){return{}}}
@@ -510,7 +553,7 @@ $('#tplload').onclick=()=>{const n=$('#tpllist').value;if(!n)return;const st=tpl
 $('#tpldel').onclick=async()=>{const n=$('#tpllist').value;if(!n)return;if(!(await askConfirm('Delete the template "'+n+'"? This cannot be undone.')))return;const st=tplStore();delete st[n];localStorage.setItem(TPL_KEY,JSON.stringify(st));tplRefresh()};
 function pmsgR2(t){const b=$('#tplsave');b.title=t;const o=b.textContent;b.textContent=t.length<14?t:'Done';setTimeout(()=>b.textContent=o,1500)}
 tplRefresh();
-
+ 
 /* ---- Profile info + autofill (saved until you delete it) ---- */
 const PF_KEY='toolstudio_profile_v1';
 const escH=t=>(t||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
@@ -539,3 +582,4 @@ pl.innerHTML=pf.proj.map(r=>pfItemHTML(r[0],r[1],'',r[2])).join('');pl.querySele
 pmsgR2('Resume filled in.')};
 </script>
 </body></html>
+ 
